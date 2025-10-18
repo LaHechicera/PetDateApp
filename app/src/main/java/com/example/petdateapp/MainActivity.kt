@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                                 selected = navController.currentBackStackEntry?.destination?.route == "home",
                                 onClick = { navController.navigate("home") },
                                 label = { Text("Calendario") },
-                                icon = { Icon(Icons.Filled.CalendarToday, "Inicio") } //Aqui va Fechas
+                                icon = { Icon(Icons.Filled.CalendarToday, "Inicio") } //Aqui va Fecha
                             )
                         }
                     }
