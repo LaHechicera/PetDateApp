@@ -25,7 +25,7 @@ fun HomeScreen(){
     // Animación sencilla de escala
     val scale by animateFloatAsState(
         targetValue = if (start) 1f else 0f,
-        animationSpec = tween(durationMillis = 1200, easing = LinearOutSlowInEasing),
+        animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing),
         label = "scale"
     )
 
@@ -40,5 +40,3 @@ fun HomeScreen(){
         Text("¡Bienvenido a PetDate!", style = MaterialTheme.typography.headlineSmall)
     }
 }
-
-//MODIFICAR TODO !!
