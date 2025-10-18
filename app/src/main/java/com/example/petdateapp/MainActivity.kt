@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -42,8 +44,28 @@ class MainActivity : ComponentActivity() {
                                 //route = indica la ruta, que es igual a inicio en este caso
                                 selected = navController.currentBackStackEntry?.destination?.route == "home",
                                 onClick = { navController.navigate("home") },
+                                label = { Text("Galeria") },
+                                icon = { Icon(Icons.Filled.Photo, "Inicio") } //Aqui va Galeria
+                            )
+                            NavigationBarItem(
+                                //navControler = Objeto que controla la navegacion
+                                //currentBackStackEntry = Representa la ultima pantalla que se visualizo
+                                //destination = hacia donde estamos apuntando nuestra direccion
+                                //route = indica la ruta, que es igual a inicio en este caso
+                                selected = navController.currentBackStackEntry?.destination?.route == "home",
+                                onClick = { navController.navigate("home") },
                                 label = { Text("Inicio") },
                                 icon = { Icon(Icons.Filled.Home, "Inicio") }
+                            )
+                            NavigationBarItem(
+                                //navControler = Objeto que controla la navegacion
+                                //currentBackStackEntry = Representa la ultima pantalla que se visualizo
+                                //destination = hacia donde estamos apuntando nuestra direccion
+                                //route = indica la ruta, que es igual a inicio en este caso
+                                selected = navController.currentBackStackEntry?.destination?.route == "home",
+                                onClick = { navController.navigate("home") },
+                                label = { Text("Calendario") },
+                                icon = { Icon(Icons.Filled.CalendarToday, "Inicio") } //Aqui va Fecha
                             )
                         }
                     }
