@@ -19,6 +19,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -35,9 +36,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.petdateapp.ui.AgendaScreen
+import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
 import com.example.petdateapp.ui.RegisterScreen
 import com.example.petdateapp.ui.theme.PetDateAPPTheme
+import com.example.petdateapp.ui.LoginScreen
+import com.example.petdateapp.ui.theme.AppTheme
+
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class) // Necesario para usar TopAppBar
@@ -45,7 +51,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PetDateAPPTheme {
+            AppTheme {
                 val navController = rememberNavController()
                 var expanded by remember { mutableStateOf(false) }
 
@@ -88,6 +94,9 @@ class MainActivity : ComponentActivity() {
                                         text = { Text("Inicio de sesión") },
                                         onClick = {
                                             expanded = false // Cerrar el menú
+
+                                             navController.navigate("login")
+
                                             Log.d("UserAction", "Navegar a Inicio de Sesión")
 
                                         }
@@ -109,25 +118,79 @@ class MainActivity : ComponentActivity() {
 
                     // definimos la barra inferior
                     bottomBar = {
-                        NavigationBar {
+                        NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.surface, // Fondo segun tema
+                            contentColor = MaterialTheme.colorScheme.onSurface  // Color base segun tema
+                        ) {
                             // ... (Tus NavigationBarItem existentes) ...
                             NavigationBarItem(
                                 selected = navController.currentBackStackEntry?.destination?.route == "gallery",
                                 onClick = { navController.navigate("gallery") },
-                                label = { Text("Galeria") },
-                                icon = { Icon(Icons.Filled.Photo, "Galeria") }
+                                label = {
+                                    Text(
+                                        "Galeria",
+                                        color = if (navController.currentBackStackEntry?.destination?.route == "gallery")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Photo,
+                                        contentDescription = "Galeria",
+                                        tint = if (navController.currentBackStackEntry?.destination?.route == "gallery")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             )
                             NavigationBarItem(
                                 selected = navController.currentBackStackEntry?.destination?.route == "home",
                                 onClick = { navController.navigate("home") },
-                                label = { Text("Inicio") },
-                                icon = { Icon(Icons.Filled.Home, "Inicio") }
+                                label = {
+                                    Text(
+                                        "Inicio",
+                                        color = if (navController.currentBackStackEntry?.destination?.route == "home")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Home,
+                                        contentDescription = "Inicio",
+                                        tint = if (navController.currentBackStackEntry?.destination?.route == "home")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             )
                             NavigationBarItem(
-                                selected = navController.currentBackStackEntry?.destination?.route == "calendar",
-                                onClick = { navController.navigate("calendar") },
-                                label = { Text("Calendario") },
-                                icon = { Icon(Icons.Filled.CalendarToday, "Calendario") }
+                                selected = navController.currentBackStackEntry?.destination?.route == "agenda",
+                                onClick = { navController.navigate("agenda") },
+                                label = {
+                                    Text(
+                                        "Agenda",
+                                        color = if (navController.currentBackStackEntry?.destination?.route == "agenda")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.CalendarToday,
+                                        contentDescription = "Agenda",
+                                        tint = if (navController.currentBackStackEntry?.destination?.route == "agenda")
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             )
                         }
                     }
@@ -142,9 +205,11 @@ class MainActivity : ComponentActivity() {
                         composable("gallery") { Text("Página de Galería (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
                         composable("calendar") { Text("Página de Calendario (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
                         composable("registro") { RegisterScreen(navController = navController) }
+                        composable("gallery") { GalleryScreen() }
+                        composable("agenda") { AgendaScreen() }
 
                         // Aquí podrías añadir las rutas de autenticación:
-                        // composable("login") { LoginScreen() }
+                        composable("login") { LoginScreen(navController) }
                         // composable("signup") { SignUpScreen() }
                     }
                 }
