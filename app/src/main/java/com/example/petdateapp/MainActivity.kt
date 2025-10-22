@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -28,12 +30,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.petdateapp.ui.AgendaScreen
 import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
+import com.example.petdateapp.ui.RegisterScreen
+import com.example.petdateapp.ui.theme.PetDateAPPTheme
 import com.example.petdateapp.ui.LoginScreen
 import com.example.petdateapp.ui.theme.AppTheme
 
@@ -46,12 +53,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
+                var expanded by remember { mutableStateOf(false) }
 
-                // Estado para controlar si el menú desplegable está abierto o cerrado
+                // Fondo total de la aplicación
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.perfil),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+
+                    // Estado para controlar si el menú desplegable está abierto o cerrado
                 var expanded by remember { mutableStateOf(false) }
 
                 // Scaffold = Creamos una estructura base para poder crear un menu inferior y superior
                 Scaffold(
+                    containerColor = Color.Transparent,
                     // Definimos la barra superior (TopAppBar)
                     topBar = {
                         TopAppBar(
@@ -80,8 +98,7 @@ class MainActivity : ComponentActivity() {
                                              navController.navigate("login")
 
                                             Log.d("UserAction", "Navegar a Inicio de Sesión")
-                                            // Ejemplo de navegación (asumiendo que tienes una ruta "login"):
-                                            // navController.navigate("login")
+
                                         }
                                     )
                                     // Opción de Registro de Usuario
@@ -89,14 +106,9 @@ class MainActivity : ComponentActivity() {
                                         text = { Text("Registro de usuario") },
                                         onClick = {
                                             expanded = false // Cerrar el menú
-
-                                            // TODO: Coloca aquí tu función o link de navegación
-
-                                            //Se agrega algo similar a esto onClick = { navController.navigate("gallery") }
+                                            navController.navigate("registro")
 
                                             Log.d("UserAction", "Navegar a Registro de Usuario")
-                                            // Ejemplo de navegación (asumiendo que tienes una ruta "signup"):
-                                            // navController.navigate("signup")
                                         }
                                     )
                                 }
@@ -190,6 +202,9 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable("home") { HomeScreen() }
                         // Añadiendo rutas dummy para evitar errores si las NavigationBarItem se usan:
+                        composable("gallery") { Text("Página de Galería (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
+                        composable("calendar") { Text("Página de Calendario (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
+                        composable("registro") { RegisterScreen(navController = navController) }
                         composable("gallery") { GalleryScreen() }
                         composable("agenda") { AgendaScreen() }
 
@@ -201,4 +216,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 }

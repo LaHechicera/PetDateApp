@@ -61,6 +61,7 @@ dependencies {
 
     // Íconos de Material
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.runtime)
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
 
