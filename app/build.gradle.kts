@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.petdateapp"
-        minSdk = 25
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -64,6 +64,7 @@ dependencies {
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
 
+    implementation("io.coil-kt:coil-compose:2.6.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
