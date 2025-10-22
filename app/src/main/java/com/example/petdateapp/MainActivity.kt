@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -55,13 +56,8 @@ class MainActivity : ComponentActivity() {
                 var expanded by remember { mutableStateOf(false) }
 
                 // Fondo total de la aplicación
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.perfil),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
+                Box(modifier = Modifier.fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)) {
 
                     // Estado para controlar si el menú desplegable está abierto o cerrado
                 var expanded by remember { mutableStateOf(false) }
@@ -121,7 +117,6 @@ class MainActivity : ComponentActivity() {
                             containerColor = MaterialTheme.colorScheme.surface, // Fondo segun tema
                             contentColor = MaterialTheme.colorScheme.onSurface  // Color base segun tema
                         ) {
-                            // ... (Tus NavigationBarItem existentes) ...
                             NavigationBarItem(
                                 selected = navController.currentBackStackEntry?.destination?.route == "gallery",
                                 onClick = { navController.navigate("gallery") },
@@ -206,8 +201,6 @@ class MainActivity : ComponentActivity() {
                         composable("registro") { RegisterScreen(navController = navController) }
                         composable("gallery") { GalleryScreen() }
                         composable("agenda") { AgendaScreen() }
-
-                        // Aquí podrías añadir las rutas de autenticación:
                         composable("login") { LoginScreen(navController) }
                         // composable("signup") { SignUpScreen() }
                     }
