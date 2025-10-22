@@ -1,0 +1,198 @@
+package com.example.petdateapp.ui
+
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.text.format.DateFormat
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.petdateapp.viewmodel.AgendaViewModel
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AgendaScreen(
+    vm: AgendaViewModel = viewModel()
+) {
+    val context = LocalContext.current
+
+    // Estado para el flujo de creación
+    var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
+    var pendingTime by remember { mutableStateOf<LocalTime?>(null) }
+    var showDescDialog by remember { mutableStateOf(false) }
+    var desc by remember { mutableStateOf(TextFieldValue("")) }
+
+    fun launchTimePicker(forDate: LocalDate) {
+        val is24h = DateFormat.is24HourFormat(context)
+        val now = LocalTime.now()
+        TimePickerDialog(
+            context,
+            { _, hour, minute ->
+                pendingDate = forDate
+                pendingTime = LocalTime.of(hour, minute)
+                desc = TextFieldValue("")
+                showDescDialog = true
+            },
+            now.hour,
+            now.minute,
+            is24h
+        ).show()
+    }
+
+    fun launchDatePicker() {
+        val cal = Calendar.getInstance()
+        val dp = DatePickerDialog(
+            context,
+            { _, y, m, d ->
+                // m es 0-11
+                launchTimePicker(LocalDate.of(y, m + 1, d))
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        )
+        // Lunes como primer día
+        dp.setOnShowListener { dp.datePicker.firstDayOfWeek = Calendar.MONDAY }
+        dp.show()
+    }
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Agenda") }) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { launchDatePicker() }) {
+                Icon(Icons.Default.Add, contentDescription = "Agregar cita")
+            }
+        }
+    ) { padding ->
+        // Lista de citas
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(vm.items, key = { it.id }) { item ->
+                AgendaItemRow(
+                    data = item,
+                    onDelete = { vm.removeById(item.id) }
+                )
+            }
+        }
+
+        // Diálogo de descripción (último paso)
+        if (showDescDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    pendingDate = null
+                    pendingTime = null
+                    showDescDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val d = pendingDate
+                            val t = pendingTime
+                            if (d != null && t != null) vm.addAppointment(d, t, desc.text)
+                            pendingDate = null
+                            pendingTime = null
+                            showDescDialog = false
+                        }
+                    ) { Text("Guardar") }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            pendingDate = null
+                            pendingTime = null
+                            showDescDialog = false
+                        }
+                    ) { Text("Cancelar") }
+                },
+                title = { Text("Nueva cita") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedTextField(
+                            value = desc,
+                            onValueChange = { desc = it },
+                            singleLine = true,
+                            label = { Text("Descripción de la cita") },      // ← label visible
+                            placeholder = { Text("Ej: vacuna antirrábica") }, // ← ayuda clara
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // Resumen de fecha/hora elegidas
+                        val is24h = DateFormat.is24HourFormat(context)
+                        val dateText = pendingDate?.format(
+                            DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
+                        ) ?: "Sin fecha"
+                        val timeText = pendingTime?.let {
+                            if (is24h) it.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            else it.format(DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()))
+                        } ?: "--:--"
+
+                        Text("Fecha: $dateText")
+                        Text("Hora: $timeText")
+                    }
+                }
+            )
+        }
+    }
+}
+
+/** Fila de la lista con formato de fecha/hora acorde a 12/24 h del sistema. */
+@Composable
+private fun AgendaItemRow(
+    data: AgendaViewModel.AgendaItem,
+    onDelete: () -> Unit
+) {
+    val context = LocalContext.current
+    val is24h = DateFormat.is24HourFormat(context)
+    val pattern = if (is24h) "EEE d MMM yyyy • HH:mm" else "EEE d MMM yyyy • h:mm a"
+    val formatter = remember(pattern) {
+        DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
+    }
+
+    ElevatedCard {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(data.dateTime.format(formatter))
+                Spacer(Modifier.height(2.dp))
+                Text(data.description)
+            }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+            }
+        }
+    }
+}

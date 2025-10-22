@@ -31,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.petdateapp.ui.AgendaScreen
+import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
 import com.example.petdateapp.ui.LoginScreen
 import com.example.petdateapp.ui.theme.AppTheme
@@ -156,12 +158,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                             NavigationBarItem(
-                                selected = navController.currentBackStackEntry?.destination?.route == "calendar",
-                                onClick = { navController.navigate("calendar") },
+                                selected = navController.currentBackStackEntry?.destination?.route == "agenda",
+                                onClick = { navController.navigate("agenda") },
                                 label = {
                                     Text(
-                                        "Calendario",
-                                        color = if (navController.currentBackStackEntry?.destination?.route == "calendar")
+                                        "Agenda",
+                                        color = if (navController.currentBackStackEntry?.destination?.route == "agenda")
                                             MaterialTheme.colorScheme.primary
                                         else
                                             MaterialTheme.colorScheme.onSurfaceVariant
@@ -170,8 +172,8 @@ class MainActivity : ComponentActivity() {
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Filled.CalendarToday,
-                                        contentDescription = "Calendario",
-                                        tint = if (navController.currentBackStackEntry?.destination?.route == "calendar")
+                                        contentDescription = "Agenda",
+                                        tint = if (navController.currentBackStackEntry?.destination?.route == "agenda")
                                             MaterialTheme.colorScheme.primary
                                         else
                                             MaterialTheme.colorScheme.onSurfaceVariant
@@ -188,8 +190,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable("home") { HomeScreen() }
                         // Añadiendo rutas dummy para evitar errores si las NavigationBarItem se usan:
-                        composable("gallery") { Text("Página de Galería (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
-                        composable("calendar") { Text("Página de Calendario (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
+                        composable("gallery") { GalleryScreen() }
+                        composable("agenda") { AgendaScreen() }
 
                         // Aquí podrías añadir las rutas de autenticación:
                         composable("login") { LoginScreen(navController) }
