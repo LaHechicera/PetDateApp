@@ -40,7 +40,6 @@ import com.example.petdateapp.ui.AgendaScreen
 import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
 import com.example.petdateapp.ui.RegisterScreen
-import com.example.petdateapp.ui.theme.PetDateAPPTheme
 import com.example.petdateapp.ui.LoginScreen
 import com.example.petdateapp.ui.theme.AppTheme
 

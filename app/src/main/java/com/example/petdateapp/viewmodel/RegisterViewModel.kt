@@ -37,13 +37,21 @@ class RegisterViewModel: ViewModel() {
             contrasena.value.length < 6 ->
                 "La contraseña debe tener al menos 6 caracteres"
 
-            //Validación de edad numérica
+            // Validación de teléfono (solo números)
+            !telefono.value.matches(Regex("^[0-9]+$")) ->
+                "El teléfono debe contener solo números"
+
+            // Validación de longitud mínima del teléfono
+            telefono.value.length < 8 ->
+                "El teléfono debe tener al menos 8 dígitos"
+
+            //Validación de edad
             edad.value.toIntOrNull() == null ->
                 "La edad debe ser un número entero"
 
-            //Validación de peso numérico
+            //Validación de peso
             peso.value.toFloatOrNull() == null ->
-                "El peso debe ser un número válido sin punto"
+                "El peso debe ser un número, con o sin coma"
 
             else -> "Datos registrados correctamente."
         }
