@@ -82,8 +82,11 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Registra tu Mascota", fontSize = 24.sp, color = Color(0xFF1E88E5))
-                Spacer(modifier = Modifier.height(24.dp))
+                Text("Registrate", style = MaterialTheme.typography.headlineSmall.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ))
+                Spacer(modifier = Modifier.height(24.dp)
+                )
 
                 // Dueño
                 Box(
@@ -139,6 +142,11 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Mascota
+                Text("Ahora registra a tu mascota", style = MaterialTheme.typography.headlineSmall.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ))
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -206,8 +214,8 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1E88E5),
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Text("Registrar Mascota")
