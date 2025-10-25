@@ -54,7 +54,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.statusBars
-
+import androidx.compose.foundation.isSystemInDarkTheme
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class) // Necesario para usar TopAppBar
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,6 +95,20 @@ class MainActivity : ComponentActivity() {
                                         .padding(horizontal = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    //Logo agregado antes del texto PetDate
+                                    //Detectar si el tema es oscuro o claro
+                                    val isDarkTheme = isSystemInDarkTheme()
+                                    Image(
+                                        painter = painterResource(
+                                            id = if (isDarkTheme) R.drawable.logo else R.drawable.logo2 // NEW: Cambio dinámico según tema
+                                        ),
+                                        contentDescription = if (isDarkTheme) "Logo PetDate - Dark" else "Logo PetDate - Light",
+                                        modifier = Modifier
+                                            .height(28.dp) // Mantener tamaño acorde al texto
+                                            .padding(end = 8.dp),
+                                        contentScale = ContentScale.Fit
+                                    )
+
                                     // Título PetDate
                                     Text(
                                         text = "PetDate",
@@ -103,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
-                                    // Icono de menú desplegable
+                                    // Icono de menú desplegable (SE MANTIENE)
                                     IconButton(onClick = { expanded = true }) {
                                         Icon(
                                             imageVector = Icons.Filled.Person,
@@ -112,35 +126,30 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
 
-                                        DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = { Text("Inicio de sesión") },
-                                                onClick = {
-                                                    expanded = false
-                                                    navController.navigate("login")
-                                                    Log.d(
-                                                        "UserAction",
-                                                        "Navegar a Inicio de Sesión"
-                                                    )
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = { Text("Registro de usuario") },
-                                                onClick = {
-                                                    expanded = false
-                                                    navController.navigate("registro")
-                                                    Log.d(
-                                                        "UserAction",
-                                                        "Navegar a Registro de Usuario"
-                                                    )
-                                                }
-                                            )
-                                        }
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Inicio de sesión") },
+                                            onClick = {
+                                                expanded = false
+                                                navController.navigate("login")
+                                                Log.d("UserAction", "Navegar a Inicio de Sesión")
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Registro de usuario") },
+                                            onClick = {
+                                                expanded = false
+                                                navController.navigate("registro")
+                                                Log.d("UserAction", "Navegar a Registro de Usuario")
+                                            }
+                                        )
                                     }
                                 }
+
+                            }
                             },
 
                         //Barra inferior
