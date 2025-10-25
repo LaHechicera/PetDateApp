@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -207,10 +208,18 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // → Nota: aquí NO navegamos. Solo validamos.
+                val context = LocalContext.current
+
+                // Inicializar la BD UNA sola vez (ideal en LaunchedEffect o justo antes del botón)
+                LaunchedEffect(Unit) {
+                    viewModel.initDB(context)
+                }
+
                 Button(
                     onClick = {
-                        viewModel.validar()
+                        viewModel.registrar() // ✅ ahora valida y guarda al mismo tiempo
                     },
+
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(

@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage // ✅ Se usa la oficial de Coil
+import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
 
 /**
@@ -47,6 +47,12 @@ fun GalleryScreen(
 
     Scaffold(
         topBar = {
+
+            // Reemplazo de SmallTopAppBar por componente real
+            TopAppBar(
+                title = { Text("Galería") }
+            )
+
             //Barra personalizada con borde y texto centrado
             Surface(
                 modifier = Modifier
@@ -103,7 +109,7 @@ fun GalleryScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // ✅ Grid 2 columnas. Mostramos exactamente 6 slots visuales sin recordar estado extra.
+            // Grid 2 columnas. Mostramos exactamente 6 slots visuales sin recordar estado extra.
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -111,7 +117,7 @@ fun GalleryScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(6) { index ->
-                    // ✅ getOrNull para evitar errores de índice
+                    // getOrNull para evitar errores de índice
                     val uri = images.getOrNull(index)
 
                     if (uri != null) {
@@ -149,7 +155,7 @@ private fun ImageCard(
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
     ) {
-        // ✅ Uso correcto de AsyncImage de Coil
+        // Uso correcto de AsyncImage de Coil
         AsyncImage(
             model = uri,
             contentDescription = "Imagen seleccionada",

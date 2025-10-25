@@ -1,25 +1,65 @@
 package com.example.petdateapp.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.petdateapp.data.database.AppDatabase
+import com.example.petdateapp.data.entity.MascotaEntity
+import com.example.petdateapp.data.entity.UsuarioEntity
+import kotlinx.coroutines.launch
 
-class RegisterViewModel: ViewModel() {
+class RegisterViewModel : ViewModel() {
+
+    // -----------------------------------------
+    // Variables del formulario - Datos Mascota
+    // -----------------------------------------
     val nombreMascota = mutableStateOf("")
     val especie = mutableStateOf("")
     val raza = mutableStateOf("")
     val edad = mutableStateOf("")
     val peso = mutableStateOf("")
 
+    // -----------------------------------------
     // Variables del formulario - Datos del dueño
+    // -----------------------------------------
     val nombreDueno = mutableStateOf("")
     val telefono = mutableStateOf("")
     val correo = mutableStateOf("")
     val contrasena = mutableStateOf("")
 
-    // Mensaje de validación
+    // -----------------------------------------
+    // Mensaje de validación o éxito (UI observa esto)
+    // -----------------------------------------
     val mensaje = mutableStateOf("")
 
-    // Función para validar campos
+    // -----------------------------------------
+    // ROOM-DB: Variables para acceder a la BD
+    // -----------------------------------------
+    private var database: AppDatabase? = null
+
+    // ROOM-DB: Esta función debe llamarse desde RegisterScreen para inicializar la BD
+    fun initDB(context: Context) {
+        if (database == null) {
+            database = AppDatabase.getInstance(context)
+        }
+    }
+
+    // -----------------------------------------
+    // Función principal: valida y guarda en BD si todo está correcto
+    // -----------------------------------------
+    fun registrar() {
+        validar() // Llamamos primero a tu validación original
+
+        // Si el mensaje indica éxito, procedemos con la BD
+        if (mensaje.value == "Datos registrados correctamente.") {
+            guardarEnBD()
+        }
+    }
+
+    // -----------------------------------------
+    // Función para validar campos (TÚ CÓDIGO ORIGINAL)
+    // -----------------------------------------
     fun validar() {
         mensaje.value = when {
             // Validar campos vacíos incluyendo contraseña
@@ -54,6 +94,52 @@ class RegisterViewModel: ViewModel() {
                 "El peso debe ser un número, con o sin coma"
 
             else -> "Datos registrados correctamente."
+        }
+    }
+
+    // ---------------------------------------------------
+    // ROOM-DB: Guardar Usuario y Mascota en la base de datos
+    // ---------------------------------------------------
+    private fun guardarEnBD() {
+        val db = database
+        if (db == null) {
+            mensaje.value = "Error interno: BD no inicializada"
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                // 1) Crear entidad Usuario
+                val usuarioEntity = UsuarioEntity(
+                    correo = correo.value,
+                    nombreDueno = nombreDueno.value,
+                    telefono = telefono.value,
+                    contrasena = contrasena.value
+                )
+
+                // Insertar usuario
+                db.usuarioDao().insert(usuarioEntity)
+
+                // 2) Crear entidad Mascota
+                val mascotaEntity = MascotaEntity(
+                    nombreMascota = nombreMascota.value,
+                    especie = especie.value,
+                    raza = raza.value,
+                    edad = edad.value.toInt(),
+                    peso = peso.value.toFloat(),
+                    correoDueno = correo.value
+                )
+
+                // Insertar mascota
+                db.mascotaDao().insert(mascotaEntity)
+
+                // Actualizamos el mensaje para la UI (éxito)
+                mensaje.value = "Datos registrados correctamente."
+
+            } catch (e: Exception) {
+                // Si el correo ya existe u otro error de BD
+                mensaje.value = "Error al registrar: ${e.message}"
+            }
         }
     }
 }
