@@ -41,6 +41,11 @@ fun AgendaScreen(
 ) {
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        vm.init(context) // Carga automática de citas del usuario logueado
+    }
+
+
     // Estado para el flujo de creación
     var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
     var pendingTime by remember { mutableStateOf<LocalTime?>(null) }
