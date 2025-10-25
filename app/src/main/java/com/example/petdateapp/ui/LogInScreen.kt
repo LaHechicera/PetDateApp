@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,11 +32,24 @@ fun LoginScreen(
     viewModel: LogInViewModel = viewModel()
 ) {
     var showWelcomeDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    // Inicializar la base de datos una vez
+    LaunchedEffect(Unit) {
+        viewModel.initDB(context)
+    }
+
+    // Escuchar cambios en el mensaje del ViewModel
+    LaunchedEffect(viewModel.mensaje.value) {
+        if (viewModel.mensaje.value == "Ingreso sesión exitosa") {
+            showWelcomeDialog = true
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // ✅ Color de fondo del tema
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -44,13 +58,11 @@ fun LoginScreen(
         OutlinedTextField(
             value = viewModel.correo.value,
             onValueChange = { viewModel.correo.value = it },
-            label = { Text("Correo", color = MaterialTheme.colorScheme.onSurface) },
+            label = { Text("Correo") },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                cursorColor = MaterialTheme.colorScheme.primary,
-                focusedLabelColor = MaterialTheme.colorScheme.primary
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
             )
         )
 
@@ -60,26 +72,21 @@ fun LoginScreen(
         OutlinedTextField(
             value = viewModel.clave.value,
             onValueChange = { viewModel.clave.value = it },
-            label = { Text("Contraseña", color = MaterialTheme.colorScheme.onSurface) },
+            label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                cursorColor = MaterialTheme.colorScheme.primary,
-                focusedLabelColor = MaterialTheme.colorScheme.primary
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
             )
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Botón de inicio de sesión
+        // Botón de inicio de sesión (solo llama a validar)
         Button(
             onClick = {
-                viewModel.validar()
-                if (viewModel.mensaje.value == "Ingreso sesión exitosa") {
-                    showWelcomeDialog = true
-                }
+                viewModel.validar() // Aquí se hace la validación y consulta en BD
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -92,7 +99,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Mensaje de validación
+        // Mensaje (error o éxito)
         Text(
             viewModel.mensaje.value,
             color = if (viewModel.mensaje.value == "Ingreso sesión exitosa")
@@ -103,10 +110,10 @@ fun LoginScreen(
         )
     }
 
-    // Popup de bienvenida
+    // Popup de bienvenida y navegación automática
     if (showWelcomeDialog) {
         AlertDialog(
-            onDismissRequest = { /* Bloquea el cierre manual */ },
+            onDismissRequest = { /* Evitar cerrar manualmente */ },
             confirmButton = {},
             title = {
                 Text(
@@ -125,9 +132,9 @@ fun LoginScreen(
             containerColor = MaterialTheme.colorScheme.surface
         )
 
-        // Redirección automática
+        //  Retraso y navegación
         LaunchedEffect(Unit) {
-            delay(2000)
+            delay(2000) // tiempo del popup
             showWelcomeDialog = false
             navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
@@ -135,3 +142,4 @@ fun LoginScreen(
         }
     }
 }
+
