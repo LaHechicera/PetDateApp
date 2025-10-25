@@ -47,12 +47,35 @@ fun GalleryScreen(
 
     Scaffold(
         topBar = {
-            // ✅ Reemplazo de SmallTopAppBar por componente real
-            TopAppBar(
-                title = { Text("Galería") }
-            )
+            //Barra personalizada con borde y texto centrado
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WindowInsets.statusBars.asPaddingValues())
+                    .height(72.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .border(
+                        width = 1.dp, //Aumentar grosor del bordedp
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(16.dp),
+                shadowElevation = 0.dp
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center // ✅ Centramos el texto visualmente
+                ) {
+                    Text(
+                        text = "Galería",
+                        style = MaterialTheme.typography.headlineSmall, // Estilo original solicitado
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
-    ) { padding ->
+    )  { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)

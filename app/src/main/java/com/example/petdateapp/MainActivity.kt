@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,6 +45,15 @@ import com.example.petdateapp.ui.RegisterScreen
 import com.example.petdateapp.ui.LoginScreen
 import com.example.petdateapp.ui.theme.AppTheme
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class) // Necesario para usar TopAppBar
@@ -56,157 +66,180 @@ class MainActivity : ComponentActivity() {
                 var expanded by remember { mutableStateOf(false) }
 
                 // Fondo total de la aplicación
-                Box(modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
 
-                    // Estado para controlar si el menú desplegable está abierto o cerrado
-                var expanded by remember { mutableStateOf(false) }
+                    // Scaffold = Creamos una estructura base para poder crear un menu inferior y superior
+                    Scaffold(
+                        containerColor = Color.Transparent,
 
-                // Scaffold = Creamos una estructura base para poder crear un menu inferior y superior
-                Scaffold(
-                    containerColor = Color.Transparent,
-                    // Definimos la barra superior (TopAppBar)
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("PetDate") }, // Título de la aplicación
-                            // Acciones (botones) que se alinean a la derecha
-                            actions = {
-                                // 1. Botón cuadrado de perfil (IconButton)
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Person,
-                                        contentDescription = "Menú sesión de Usuario"
-                                    )
-                                }
-
-                                // 2. Menú desplegable (DropdownMenu)
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false } // Se cierra al tocar fuera
+                        //Barra superior fondo independiente
+                        topBar = {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    //Respeta la barra de estado (evita que el Surface se superponga)
+                                    .padding(WindowInsets.statusBars.asPaddingValues())
+                                    .height(64.dp) // Altura aumentada para dar espacio visual cómodo
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant, // Fondo independiente
+                                shape = RoundedCornerShape(16.dp), // Bordes medios
+                                shadowElevation = 0.dp
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Opción de Inicio de Sesión
-                                    DropdownMenuItem(
-                                        text = { Text("Inicio de sesión") },
-                                        onClick = {
-                                            expanded = false // Cerrar el menú
+                                    // Título PetDate
+                                    Text(
+                                        text = "PetDate",
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.weight(1f)
+                                    )
 
-                                             navController.navigate("login")
+                                    // Icono de menú desplegable
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Person,
+                                            contentDescription = "Menú sesión de Usuario",
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
 
-                                            Log.d("UserAction", "Navegar a Inicio de Sesión")
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text("Inicio de sesión") },
+                                                onClick = {
+                                                    expanded = false
+                                                    navController.navigate("login")
+                                                    Log.d(
+                                                        "UserAction",
+                                                        "Navegar a Inicio de Sesión"
+                                                    )
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("Registro de usuario") },
+                                                onClick = {
+                                                    expanded = false
+                                                    navController.navigate("registro")
+                                                    Log.d(
+                                                        "UserAction",
+                                                        "Navegar a Registro de Usuario"
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            },
 
+                        //Barra inferior
+                        bottomBar = {
+                            androidx.compose.material3.Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                            ) {
+                                NavigationBar(
+                                    containerColor = Color.Transparent,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                ) {
+                                    NavigationBarItem(
+                                        selected = navController.currentBackStackEntry?.destination?.route == "gallery",
+                                        onClick = { navController.navigate("gallery") },
+                                        label = {
+                                            Text(
+                                                "Galeria",
+                                                color = if (navController.currentBackStackEntry?.destination?.route == "gallery")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.Filled.Photo,
+                                                contentDescription = "Galeria",
+                                                tint = if (navController.currentBackStackEntry?.destination?.route == "gallery")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
                                         }
                                     )
-                                    // Opción de Registro de Usuario
-                                    DropdownMenuItem(
-                                        text = { Text("Registro de usuario") },
-                                        onClick = {
-                                            expanded = false // Cerrar el menú
-                                            navController.navigate("registro")
-
-                                            Log.d("UserAction", "Navegar a Registro de Usuario")
+                                    NavigationBarItem(
+                                        selected = navController.currentBackStackEntry?.destination?.route == "home",
+                                        onClick = { navController.navigate("home") },
+                                        label = {
+                                            Text(
+                                                "Inicio",
+                                                color = if (navController.currentBackStackEntry?.destination?.route == "home")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.Filled.Home,
+                                                contentDescription = "Inicio",
+                                                tint = if (navController.currentBackStackEntry?.destination?.route == "home")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    )
+                                    NavigationBarItem(
+                                        selected = navController.currentBackStackEntry?.destination?.route == "agenda",
+                                        onClick = { navController.navigate("agenda") },
+                                        label = {
+                                            Text(
+                                                "Agenda",
+                                                color = if (navController.currentBackStackEntry?.destination?.route == "agenda")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.Filled.CalendarToday,
+                                                contentDescription = "Agenda",
+                                                tint = if (navController.currentBackStackEntry?.destination?.route == "agenda")
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
                                         }
                                     )
                                 }
                             }
-                        )
-                    },
-
-                    // definimos la barra inferior
-                    bottomBar = {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surface, // Fondo segun tema
-                            contentColor = MaterialTheme.colorScheme.onSurface  // Color base segun tema
-                        ) {
-                            NavigationBarItem(
-                                selected = navController.currentBackStackEntry?.destination?.route == "gallery",
-                                onClick = { navController.navigate("gallery") },
-                                label = {
-                                    Text(
-                                        "Galeria",
-                                        color = if (navController.currentBackStackEntry?.destination?.route == "gallery")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = Icons.Filled.Photo,
-                                        contentDescription = "Galeria",
-                                        tint = if (navController.currentBackStackEntry?.destination?.route == "gallery")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            )
-                            NavigationBarItem(
-                                selected = navController.currentBackStackEntry?.destination?.route == "home",
-                                onClick = { navController.navigate("home") },
-                                label = {
-                                    Text(
-                                        "Inicio",
-                                        color = if (navController.currentBackStackEntry?.destination?.route == "home")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = Icons.Filled.Home,
-                                        contentDescription = "Inicio",
-                                        tint = if (navController.currentBackStackEntry?.destination?.route == "home")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            )
-                            NavigationBarItem(
-                                selected = navController.currentBackStackEntry?.destination?.route == "agenda",
-                                onClick = { navController.navigate("agenda") },
-                                label = {
-                                    Text(
-                                        "Agenda",
-                                        color = if (navController.currentBackStackEntry?.destination?.route == "agenda")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = Icons.Filled.CalendarToday,
-                                        contentDescription = "Agenda",
-                                        tint = if (navController.currentBackStackEntry?.destination?.route == "agenda")
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            )
                         }
-                    }
-                ) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "home",
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable("home") { HomeScreen() }
-                        // Añadiendo rutas dummy para evitar errores si las NavigationBarItem se usan:
-                        composable("gallery") { Text("Página de Galería (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
-                        composable("calendar") { Text("Página de Calendario (Aqui se debe colocar la funcion de la pantalla correspondiente)", modifier = Modifier.fillMaxSize()) }
-                        composable("registro") { RegisterScreen(navController = navController) }
-                        composable("gallery") { GalleryScreen() }
-                        composable("agenda") { AgendaScreen() }
-                        composable("login") { LoginScreen(navController) }
-                        // composable("signup") { SignUpScreen() }
+                    ) { innerPadding ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = "home",
+                            modifier = Modifier.padding(innerPadding)
+                        ) {
+                            composable("home") { HomeScreen() }
+                            composable("gallery") { GalleryScreen() }
+                            composable("agenda") { AgendaScreen() }
+                            composable("registro") { RegisterScreen(navController = navController) }
+                            composable("login") { LoginScreen(navController) }
+                        }
                     }
                 }
             }
         }
     }
-}
 }
