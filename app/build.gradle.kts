@@ -78,10 +78,11 @@ dependencies {
 
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-
-
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    // Para deslizamiento de pantallas tactil
+    implementation("androidx.compose.foundation:foundation:1.6.0")
+    implementation("com.google.accompanist:accompanist-pager:0.32.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

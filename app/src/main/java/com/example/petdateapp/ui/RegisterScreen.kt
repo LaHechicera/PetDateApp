@@ -63,21 +63,21 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
             // Espera para volver al inicio
             delay(1000)
 
-            // Si fue éxito, navegar y limpiar (esto sucede después de los 2s)
+            // Si fue éxito, navegar y limpiar
             if (msg == "Datos registrados correctamente.") {
                 navController.navigate("home") {
                     popUpTo("registro") { inclusive = true }
                 }
             }
 
-            // Limpiar mensaje para que no reaparezca al volver (y para que LaunchedEffect no re-dispare innecesariamente)
+            // Limpiar mensaje para que no reaparezca al volver
             viewModel.mensaje.value = ""
         }
     }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background // Alfred: evita fondo negro y respeta el tema
+        color = MaterialTheme.colorScheme.background //evita fondo negro
     ) {
         Box {
             Column(
@@ -97,7 +97,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant) // Alfred: tarjeta mantiene estilo
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                         .padding(16.dp)
                 ) {
@@ -220,7 +220,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
 
                 Button(
                     onClick = {
-                        viewModel.registrar() // ✅ ahora valida y guarda al mismo tiempo
+                        viewModel.registrar() //valida y guarda
                     },
 
                     modifier = Modifier.fillMaxWidth(),

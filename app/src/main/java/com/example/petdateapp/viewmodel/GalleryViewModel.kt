@@ -4,12 +4,6 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 
-/**
- * Alfred: ViewModel sencillo para gestionar selección de imágenes.
- * - Mantiene una lista reactiva de Uris (máx. 6).
- * - Evita duplicados.
- * - Expone helpers para saber si se puede agregar más.
- */
 class GalleryViewModel : ViewModel() {
 
     // Estado observable por Compose
@@ -22,11 +16,7 @@ class GalleryViewModel : ViewModel() {
     fun canAddMore(): Boolean = _images.size < maxItems
     fun remainingSlots(): Int = (maxItems - _images.size).coerceAtLeast(0)
 
-    /**
-     * Agrega imágenes respetando:
-     * - Máximo de 6
-     * - Sin duplicados
-     */
+    // Agrega imágenes respetando: Máximo de 6 y Sin duplicados
     fun addImages(newUris: List<Uri>) {
         if (newUris.isEmpty() || !canAddMore()) return
 
@@ -39,12 +29,12 @@ class GalleryViewModel : ViewModel() {
         _images.addAll(take)
     }
 
-    /** Quita una imagen por índice (si existe). */
+    //Quita una imagen por índice (si existe).
     fun removeAt(index: Int) {
         if (index in _images.indices) _images.removeAt(index)
     }
 
-    /** Limpia todas las imágenes (opcional). */
+    //Limpia todas las imágenes (opcional).
     fun clearAll() {
         _images.clear()
     }
