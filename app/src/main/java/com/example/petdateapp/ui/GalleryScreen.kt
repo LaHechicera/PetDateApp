@@ -24,13 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
-
-/**
- * Alfred: Pantalla de galería (solo estilos y llamadas a la lógica).
- * - Muestra 2 columnas × 3 filas (hasta 6 imágenes).
- * - Botón "Agregar" abre Photo Picker (múltiple).
- * - El ViewModel impone el límite y evita duplicados.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(
@@ -47,11 +40,6 @@ fun GalleryScreen(
 
     Scaffold(
         topBar = {
-
-            // Reemplazo de SmallTopAppBar por componente real
-            TopAppBar(
-                title = { Text("Galería") }
-            )
 
             //Barra personalizada con borde y texto centrado
             Surface(
@@ -71,7 +59,7 @@ fun GalleryScreen(
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center // ✅ Centramos el texto visualmente
+                    contentAlignment = Alignment.Center //Centramos el texto visualmente
                 ) {
                     Text(
                         text = "Galería",
@@ -143,19 +131,20 @@ fun GalleryScreen(
     }
 }
 
-/** Tarjeta para una imagen con botón de quitar. */
+
 @Composable
+//Tarjeta para una imagen con botón de quitar.
 private fun ImageCard(
     uri: Uri,
     onRemove: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .aspectRatio(1f) // Alfred: mantiene forma cuadrada
+            .aspectRatio(1f) //mantiene forma cuadrada
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
     ) {
-        // Uso correcto de AsyncImage de Coil
+
         AsyncImage(
             model = uri,
             contentDescription = "Imagen seleccionada",
@@ -176,8 +165,9 @@ private fun ImageCard(
     }
 }
 
-/** Tarjeta placeholder con ícono de "agregar". */
+
 @Composable
+//Tarjeta placeholder con ícono de "agregar"
 private fun PlaceholderCard(
     enabled: Boolean,
     onClick: () -> Unit
