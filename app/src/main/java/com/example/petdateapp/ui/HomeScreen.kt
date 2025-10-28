@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petdateapp.R
@@ -63,13 +64,17 @@ fun HomeScreen() {
                 enter = fadeIn(tween(800)) + scaleIn(tween(800))
             ) {
                 Text(
-                    text = "Bienvenidos",
+                    text = "Bienvenidos a PetDate!",
                     style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.2f),
-                        color = MaterialTheme.colorScheme.onBackground
+                        fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.2f
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth(), //
+                    textAlign = TextAlign.Center
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
+
 
             // Imagen del Logo
             AnimatedVisibility(
@@ -89,17 +94,6 @@ fun HomeScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Texto inferior "a PetDate!"
-            AnimatedVisibility(
-                visible = visible,
-                enter = fadeIn(tween(900)) + scaleIn(tween(900))
-            ) {
-                Text(
-                    text = "a PetDate!",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
         }
     }
 }
