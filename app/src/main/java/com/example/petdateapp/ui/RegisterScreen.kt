@@ -60,8 +60,8 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 )
             }
 
-            // Esperar exactamente 2 segundos visible
-            delay(2000)
+            // Espera para volver al inicio
+            delay(1000)
 
             // Si fue éxito, navegar y limpiar (esto sucede después de los 2s)
             if (msg == "Datos registrados correctamente.") {
@@ -75,7 +75,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
         }
     }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background // Alfred: evita fondo negro y respeta el tema
+    ) {
         Box {
             Column(
                 modifier = Modifier
@@ -83,7 +86,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Registrate", style = MaterialTheme.typography.headlineSmall.copy(
+                Text("Registro del dueño", style = MaterialTheme.typography.headlineSmall.copy(
                     color = MaterialTheme.colorScheme.onBackground
                 ))
                 Spacer(modifier = Modifier.height(24.dp)
@@ -94,7 +97,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceVariant) // Alfred: tarjeta mantiene estilo
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                         .padding(16.dp)
                 ) {
@@ -143,7 +146,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Mascota
-                Text("Ahora registra a tu mascota", style = MaterialTheme.typography.headlineSmall.copy(
+                Text("Registro de la mascota", style = MaterialTheme.typography.headlineSmall.copy(
                     color = MaterialTheme.colorScheme.onBackground
                 ))
                 Spacer(modifier = Modifier.height(24.dp))
