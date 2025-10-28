@@ -178,8 +178,8 @@ fun AgendaScreen(
                             value = desc,
                             onValueChange = { desc = it },
                             singleLine = true,
-                            label = { Text("Descripción de la cita") },      // ← label visible
-                            placeholder = { Text("Ej: vacuna antirrábica") }, // ← ayuda clara
+                            label = { Text("Descripción de la cita") },      //label visible
+                            placeholder = { Text("Ej: vacuna antirrábica") }, //ayuda clara
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -202,7 +202,6 @@ fun AgendaScreen(
     }
 }
 
-/** Fila de la lista con formato de fecha/hora acorde a 12/24 h del sistema. */
 @Composable
 private fun AgendaItemRow(
     data: AgendaViewModel.AgendaItem,

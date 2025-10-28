@@ -15,15 +15,9 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicLong
 
-/**
- * ViewModel de Agenda con persistencia en Room por usuario.
- * - Carga automáticamente las citas del usuario al iniciar.
- * - Guarda y elimina citas en la base de datos local.
- * - Mantiene la lista observable compatible con la UI actual.
- */
 class AgendaViewModel : ViewModel() {
 
-    // Modelo usado por la UI (igual que tenías)
+    // Modelo usado por la UI
     data class AgendaItem(
         val id: Long,
         val dateTime: LocalDateTime,
@@ -58,9 +52,7 @@ class AgendaViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Cargar citas desde la base de datos Room según el correo del usuario logueado.
-     */
+    //Cargar citas desde la base de datos Room según el correo del usuario logueado.
     private suspend fun loadAppointmentsFromDB() {
         val db = database ?: return
         val correo = userEmail ?: return
@@ -86,9 +78,7 @@ class AgendaViewModel : ViewModel() {
         _items.sortBy { it.dateTime }
     }
 
-    /**
-     * Agregar cita: guarda en Room y actualiza lista.
-     */
+    //Agregar cita
     fun addAppointment(date: LocalDate, time: LocalTime, description: String) {
         val correo = userEmail ?: return
         val desc = description.trim().ifEmpty { "Cita veterinaria" }
@@ -105,14 +95,12 @@ class AgendaViewModel : ViewModel() {
             val db = database ?: return@launch
             db.agendaDao().insert(entity)
 
-            // 🆕 Volver a cargar desde Room para mantener IDs correctos
+            //Volver a cargar desde Room para mantener IDs correctos
             loadAppointmentsFromDB()
         }
     }
 
-    /**
-     * Eliminar cita desde base de datos.
-     */
+    //Eliminar cita desde base de datos.
     fun removeById(id: Long) {
         viewModelScope.launch {
             val db = database ?: return@launch

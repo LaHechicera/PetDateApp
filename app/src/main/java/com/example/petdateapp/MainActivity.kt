@@ -7,8 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
@@ -16,10 +19,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.petdateapp.ui.AgendaScreen
 import com.example.petdateapp.ui.GalleryScreen
@@ -35,6 +36,11 @@ import com.example.petdateapp.ui.HomeScreen
 import com.example.petdateapp.ui.RegisterScreen
 import com.example.petdateapp.ui.LoginScreen
 import com.example.petdateapp.ui.theme.AppTheme
+import kotlinx.coroutines.launch
+
+//para la ventana flotante barra derecha
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 
 class MainActivity : ComponentActivity() {
 
@@ -46,26 +52,40 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
-                var expanded by remember { mutableStateOf(false) }
+                var expanded by remember { mutableStateOf(false) } //para mostrar/ocultar la barra usuario
 
-                // Fondo total de la aplicación
+                val pagerState = rememberPagerState(
+                    initialPage = 1,
+                    pageCount = { 3 } // 0=Gallery, 1=Home, 2=Agenda
+                )
+                val coroutineScope = rememberCoroutineScope()
+                var selectedIndex by remember { mutableStateOf(1) }
+
+                LaunchedEffect(pagerState) {
+                    snapshotFlow { pagerState.currentPage }.collect { page ->
+                        selectedIndex = page
+                    }
+                }
+
+                val currentBackStack by navController.currentBackStackEntryAsState()
+                val currentRoute = currentBackStack?.destination?.route
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     Scaffold(
-                        containerColor = Color.Transparent, //Barra superior fondo independiente
+                        containerColor = Color.Transparent,
                         topBar = {
                             Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    // Respeta la barra de estado (evita superposición)
                                     .padding(WindowInsets.statusBars.asPaddingValues())
-                                    .height(64.dp) // Altura óptima
+                                    .height(64.dp)
                                     .padding(horizontal = 8.dp, vertical = 4.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant, // Fondo independiente
-                                shape = RoundedCornerShape(16.dp), // Bordes medios
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(16.dp),
                                 shadowElevation = 0.dp
                             ) {
                                 Row(
@@ -74,22 +94,19 @@ class MainActivity : ComponentActivity() {
                                         .padding(horizontal = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Detectar el tema actual
                                     val isDarkTheme = isSystemInDarkTheme()
 
-                                    //Logo dinámico según el tema
                                     Image(
                                         painter = painterResource(
-                                            id = if (isDarkTheme) R.drawable.logo else R.drawable.logo2
+                                            id = if (isDarkTheme) R.drawable.logo_dark else R.drawable.logo_light
                                         ),
                                         contentDescription = "Logo PetDate",
                                         modifier = Modifier
-                                            .height(28.dp) // Tamaño acorde al texto
+                                            .height(28.dp)
                                             .padding(end = 8.dp),
                                         contentScale = ContentScale.Fit
                                     )
 
-                                    // Título PetDate
                                     Text(
                                         text = "PetDate",
                                         style = MaterialTheme.typography.headlineSmall,
@@ -97,40 +114,17 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
-                                    // Icono de menú desplegable
-                                    IconButton(onClick = { expanded = true }) {
+                                    //visibilidad de la barra
+                                    IconButton(onClick = { expanded = !expanded }) {
                                         Icon(
                                             imageVector = Icons.Filled.Person,
                                             contentDescription = "Menú sesión de Usuario",
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
-
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("Inicio de sesión") },
-                                            onClick = {
-                                                expanded = false
-                                                navController.navigate("login")
-                                                Log.d("UserAction", "Navegar a Inicio de Sesión")
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Registro de usuario") },
-                                            onClick = {
-                                                expanded = false
-                                                navController.navigate("registro")
-                                                Log.d("UserAction", "Navegar a Registro de Usuario")
-                                            }
-                                        )
-                                    }
                                 }
                             }
                         },
-                        //Barra inferior
                         bottomBar = {
                             Surface(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -141,59 +135,103 @@ class MainActivity : ComponentActivity() {
                                     contentColor = MaterialTheme.colorScheme.onSurface
                                 ) {
                                     NavigationBarItem(
-                                        selected = navController.currentBackStackEntry?.destination?.route == "gallery",
-                                        onClick = { navController.navigate("gallery") },
+                                        selected = (currentRoute == "home" && selectedIndex == 0),
+                                        onClick = {
+                                            coroutineScope.launch {
+                                                if (currentRoute != "home") {
+                                                    navController.navigate("home") {
+                                                        popUpTo("home") { inclusive = false }
+                                                        launchSingleTop = true
+                                                    }
+                                                }
+                                                pagerState.animateScrollToPage(0)
+                                            }
+                                        },
                                         label = {
                                             Text(
                                                 "Galeria",
-                                                color = if (navController.currentBackStackEntry?.destination?.route == "gallery")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = if (currentRoute == "home" && selectedIndex == 0)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         },
                                         icon = {
                                             Icon(
                                                 imageVector = Icons.Filled.Photo,
                                                 contentDescription = "Galeria",
-                                                tint = if (navController.currentBackStackEntry?.destination?.route == "gallery")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                tint = if (currentRoute == "home" && selectedIndex == 0)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
+
                                     NavigationBarItem(
-                                        selected = navController.currentBackStackEntry?.destination?.route == "home",
-                                        onClick = { navController.navigate("home") },
+                                        selected = (currentRoute == "home" && selectedIndex == 1),
+                                        onClick = {
+                                            coroutineScope.launch {
+                                                if (currentRoute != "home") {
+                                                    navController.navigate("home") {
+                                                        popUpTo("home") { inclusive = false }
+                                                        launchSingleTop = true
+                                                    }
+                                                }
+                                                pagerState.animateScrollToPage(1)
+                                            }
+                                        },
                                         label = {
                                             Text(
                                                 "Inicio",
-                                                color = if (navController.currentBackStackEntry?.destination?.route == "home")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = if (currentRoute == "home" && selectedIndex == 1)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         },
                                         icon = {
                                             Icon(
                                                 imageVector = Icons.Filled.Home,
                                                 contentDescription = "Inicio",
-                                                tint = if (navController.currentBackStackEntry?.destination?.route == "home")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                tint = if (currentRoute == "home" && selectedIndex == 1)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
+
                                     NavigationBarItem(
-                                        selected = navController.currentBackStackEntry?.destination?.route == "agenda",
-                                        onClick = { navController.navigate("agenda") },
+                                        selected = (currentRoute == "home" && selectedIndex == 2),
+                                        onClick = {
+                                            coroutineScope.launch {
+                                                if (currentRoute != "home") {
+                                                    navController.navigate("home") {
+                                                        popUpTo("home") { inclusive = false }
+                                                        launchSingleTop = true
+                                                    }
+                                                }
+                                                pagerState.animateScrollToPage(2)
+                                            }
+                                        },
                                         label = {
                                             Text(
                                                 "Agenda",
-                                                color = if (navController.currentBackStackEntry?.destination?.route == "agenda")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = if (currentRoute == "home" && selectedIndex == 2)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         },
                                         icon = {
                                             Icon(
                                                 imageVector = Icons.Filled.CalendarToday,
                                                 contentDescription = "Agenda",
-                                                tint = if (navController.currentBackStackEntry?.destination?.route == "agenda")
-                                                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                tint = if (currentRoute == "home" && selectedIndex == 2)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -204,13 +242,90 @@ class MainActivity : ComponentActivity() {
                         NavHost(
                             navController = navController,
                             startDestination = "home",
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
                         ) {
-                            composable("home") { HomeScreen() }
-                            composable("gallery") { GalleryScreen() }
-                            composable("agenda") { AgendaScreen() }
-                            composable("registro") { RegisterScreen(navController = navController) }
-                            composable("login") { LoginScreen(navController) }
+                            composable("home") {
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize()
+                                ) { page ->
+                                    when (page) {
+                                        0 -> GalleryScreen()
+                                        1 -> HomeScreen()
+                                        2 -> AgendaScreen()
+                                    }
+                                }
+                            }
+                            composable("login") {
+                                LoginScreen(navController = navController)
+                            }
+                            composable("registro") {
+                                RegisterScreen(navController = navController)
+                            }
+                        }
+                    }
+
+                    // barra costado derecho
+                    if (expanded) {
+                        Popup(
+                            alignment = Alignment.TopEnd, //pegado al borde derecho-superior
+                            onDismissRequest = { expanded = false },
+                            properties = PopupProperties(
+                                focusable = true,                //para cerrar la abrra usuario al tocar fuera
+                                dismissOnClickOutside = true,   //cierre automático al tocar fuera
+                                dismissOnBackPress = true
+                            )
+                        ) {
+
+                            Surface(
+                                color = MaterialTheme.colorScheme.surface,
+                                tonalElevation = 0.dp,
+                                shadowElevation = 0.dp,
+                                shape = RoundedCornerShape(0.dp),
+                                modifier = Modifier
+                                    .width(220.dp) // ancho tipo barra compacta
+                                    .wrapContentHeight()
+                                    .padding(top = 64.dp)
+                                    .padding(end = 0.dp) //pegado al borde derecho
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp, horizontal = 10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Text(
+                                        text = "Inicio de sesión",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable {
+                                                expanded = false
+                                                navController.navigate("login")
+                                                Log.d("UserAction", "Navegar a Inicio de Sesión")
+                                            }
+                                    )
+                                    Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+
+                                    Text(
+                                        text = "Registro de usuario",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable {
+                                                expanded = false
+                                                navController.navigate("registro")
+                                                Log.d("UserAction", "Navegar a Registro de Usuario")
+                                            }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
