@@ -26,6 +26,13 @@ import androidx.navigation.NavController
 import com.example.petdateapp.viewmodel.LogInViewModel
 import kotlinx.coroutines.delay
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.size
+import com.example.petdateapp.R
+
 @Composable
 fun LoginScreen(
     navController: NavController,
@@ -33,6 +40,10 @@ fun LoginScreen(
 ) {
     var showWelcomeDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    // Detectar tema del sistema
+    val isDarkTheme = isSystemInDarkTheme() // Detectar tema oscuro o claro
+    val logoRes = if (isDarkTheme) com.example.petdateapp.R.drawable.logo_dark else R.drawable.logo_light // Seleccionar logo según tema
 
     // Inicializar la base de datos una vez
     LaunchedEffect(Unit) {
@@ -52,8 +63,20 @@ fun LoginScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top //Para mostrar logo arriba
     ) {
+
+        //Logo
+        Image(
+            painter = painterResource(id = logoRes),
+            contentDescription = "Logo PetDate",
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 10.dp) //Mueve el logo hacia abajo
+                .size(160.dp), //Aumenta tamaño del logo
+            contentScale = ContentScale.Fit
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
         // Campo de correo
         OutlinedTextField(
             value = viewModel.correo.value,
@@ -113,7 +136,7 @@ fun LoginScreen(
     // Popup de bienvenida y navegación automática
     if (showWelcomeDialog) {
         AlertDialog(
-            onDismissRequest = { /* Evitar cerrar manualmente */ },
+            onDismissRequest = {}, //Evitar cerrar manualmente
             confirmButton = {},
             title = {
                 Text(

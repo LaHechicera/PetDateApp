@@ -10,32 +10,23 @@ import com.example.petdateapp.data.entity.UsuarioEntity
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-
-    // -----------------------------------------
-    // Variables del formulario - Datos Mascota
-    // -----------------------------------------
+    // Variables del formulario para mascota
     val nombreMascota = mutableStateOf("")
     val especie = mutableStateOf("")
     val raza = mutableStateOf("")
     val edad = mutableStateOf("")
     val peso = mutableStateOf("")
 
-    // -----------------------------------------
-    // Variables del formulario - Datos del dueño
-    // -----------------------------------------
+    // Variables del formulario para dueño
     val nombreDueno = mutableStateOf("")
     val telefono = mutableStateOf("")
     val correo = mutableStateOf("")
     val contrasena = mutableStateOf("")
 
-    // -----------------------------------------
-    // Mensaje de validación o éxito (UI observa esto)
-    // -----------------------------------------
+    // Mensaje de validación
     val mensaje = mutableStateOf("")
 
-    // -----------------------------------------
     // ROOM-DB: Variables para acceder a la BD
-    // -----------------------------------------
     private var database: AppDatabase? = null
 
     // ROOM-DB: Esta función debe llamarse desde RegisterScreen para inicializar la BD
@@ -45,9 +36,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    // -----------------------------------------
-    // Función principal: valida y guarda en BD si todo está correcto
-    // -----------------------------------------
+    // Función principal: valida y guarda en BD si estan correcto
     fun registrar() {
         validar() // Llamamos primero a tu validación original
 
@@ -57,9 +46,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    // -----------------------------------------
-    // Función para validar campos (TÚ CÓDIGO ORIGINAL)
-    // -----------------------------------------
+    // Función para validar campos
     fun validar() {
         mensaje.value = when {
             // Validar campos vacíos incluyendo contraseña
@@ -97,9 +84,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    // ---------------------------------------------------
     // ROOM-DB: Guardar Usuario y Mascota en la base de datos
-    // ---------------------------------------------------
     private fun guardarEnBD() {
         val db = database
         if (db == null) {
