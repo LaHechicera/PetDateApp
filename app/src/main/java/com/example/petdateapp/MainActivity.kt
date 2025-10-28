@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
 
                 val currentBackStack by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStack?.destination?.route
+                val isDarkTheme = isSystemInDarkTheme()
 
                 Box(
                     modifier = Modifier
@@ -280,7 +281,7 @@ class MainActivity : ComponentActivity() {
                         ) {
 
                             Surface(
-                                color = MaterialTheme.colorScheme.surface,
+                                color = if (isDarkTheme) Color(0xB7986416) else Color(0xFFDAD1C6),
                                 tonalElevation = 0.dp,
                                 shadowElevation = 0.dp,
                                 shape = RoundedCornerShape(0.dp),
