@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
+
 import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,6 +140,7 @@ fun GalleryScreen(
         }
     }
 }
+
 
 @Composable
 //Tarjeta para una imagen con botón de quitar.

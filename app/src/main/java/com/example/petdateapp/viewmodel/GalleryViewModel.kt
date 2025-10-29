@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Alfred: ViewModel de Galería con Persistencia de Datos.
+ * ViewModel de Galería con Persistencia de Datos.
  * - Mantiene las imágenes en memoria para la UI.
  * - Sincroniza automáticamente con DataStore según el usuario.
  * - Requiere inicialización con contexto para acceder al DataStore.
  */
+
 class GalleryViewModel : ViewModel() {
 
     // Estado observable por Compose (SE MANTIENE)
@@ -64,6 +65,9 @@ class GalleryViewModel : ViewModel() {
     fun canAddMore(): Boolean = _images.size < maxItems
     fun remainingSlots(): Int = (maxItems - _images.size).coerceAtLeast(0)
 
+
+    // Agrega imágenes respetando: Máximo de 6 y Sin duplicados
+
     fun addImages(newUris: List<Uri>) {
         if (newUris.isEmpty() || !canAddMore()) return
 
@@ -74,6 +78,7 @@ class GalleryViewModel : ViewModel() {
         persistGallery() // 🗂 Guardar en DataStore
     }
 
+    //Quita una imagen por índice (si existe).
     fun removeAt(index: Int) {
         if (index in _images.indices) {
             _images.removeAt(index)
@@ -81,6 +86,7 @@ class GalleryViewModel : ViewModel() {
         }
     }
 
+    //Limpia todas las imágenes (opcional).
     fun clearAll() {
         _images.clear()
         persistGallery() // 🗂 Guardar en DataStore
