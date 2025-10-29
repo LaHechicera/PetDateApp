@@ -332,7 +332,7 @@ class MainActivity : ComponentActivity() {
                                     Text(
                                         text = "Cerrar sesión",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.error, // rojo para destacar
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
