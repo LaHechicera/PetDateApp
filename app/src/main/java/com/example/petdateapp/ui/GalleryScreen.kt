@@ -15,7 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,23 +24,32 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
+import androidx.compose.ui.platform.LocalContext
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(
     viewModel: GalleryViewModel = viewModel()
 ) {
+    // Obtener el contexto para inicialización de persistencia
+    val context = LocalContext.current
+
+    // Inicializar DataStore + Repository + cargar imágenes persistidas
+    LaunchedEffect(Unit) {
+        viewModel.init(context)
+    }
+
     // Launcher del Photo Picker (permite selección múltiple; el VM recorta a 6)
     val picker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(6)
     ) { uris: List<Uri> ->
-        viewModel.addImages(uris)
+        viewModel.addImages(uris) // al agregar, automáticamente persiste
     }
 
     val images = viewModel.images // List<Uri>
 
     Scaffold(
         topBar = {
-
             //Barra personalizada con borde y texto centrado
             Surface(
                 modifier = Modifier
@@ -49,7 +58,7 @@ fun GalleryScreen(
                     .height(72.dp)
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .border(
-                        width = 1.dp, //Aumentar grosor del bordedp
+                        width = 1.dp, //Aumentar grosor del borde
                         color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(16.dp)
                     ),
@@ -69,7 +78,7 @@ fun GalleryScreen(
                 }
             }
         }
-    )  { padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -111,7 +120,7 @@ fun GalleryScreen(
                     if (uri != null) {
                         ImageCard(
                             uri = uri,
-                            onRemove = { viewModel.removeAt(index) }
+                            onRemove = { viewModel.removeAt(index) } // elimina y persiste
                         )
                     } else {
                         PlaceholderCard(
@@ -130,7 +139,6 @@ fun GalleryScreen(
         }
     }
 }
-
 
 @Composable
 //Tarjeta para una imagen con botón de quitar.
@@ -164,7 +172,6 @@ private fun ImageCard(
         }
     }
 }
-
 
 @Composable
 //Tarjeta placeholder con ícono de "agregar"

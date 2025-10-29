@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 //para la ventana flotante barra derecha
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.example.petdateapp.viewmodel.LogInViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -325,6 +326,30 @@ class MainActivity : ComponentActivity() {
                                                 Log.d("UserAction", "Navegar a Registro de Usuario")
                                             }
                                     )
+
+                                    Text(
+                                        text = "Cerrar sesión",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.error, // rojo para destacar
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable {
+                                                expanded = false
+                                                // cerramos sesión
+                                                val loginViewModel = LogInViewModel()
+                                                loginViewModel.initDB(this@MainActivity) // asegurar inicialización
+                                                loginViewModel.cerrarSesion()
+
+                                                // Navegar a Login y limpiar historial
+                                                navController.navigate("login") {
+                                                    popUpTo("home") { inclusive = true } // limpiamos pantalla home
+                                                    launchSingleTop = true
+                                                }
+                                                Log.d("UserAction", "Usuario cerró sesión")
+                                            }
+                                    )
+
                                 }
                             }
                         }

@@ -41,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "petdate_db" // nombre del archivo SQLite
                 )
                     // Durante el desarrollo, usar esta línea para no tener errores de migración:
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration() //Este hace que se eliminan las bases de datos
                     .build()
                 INSTANCE = instance
                 instance
