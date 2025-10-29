@@ -75,4 +75,18 @@ class LogInViewModel : ViewModel() {
             }
         }
     }
+
+    //Funcion para cerrar sesion, borra el correo almacenado en memoria para retornar la app vacia
+    fun cerrarSesion() {
+        val ds = dataStore
+        if (ds == null) {
+            mensaje.value = "Error: DataStore no inicializado"
+            return
+        }
+
+        viewModelScope.launch {
+            ds.clearUserEmail() // Alfred: elimina la sesión del usuario
+            mensaje.value = "Sesión cerrada"
+        }
+    }
 }
