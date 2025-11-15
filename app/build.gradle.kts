@@ -71,6 +71,7 @@ dependencies {
     //Room SQLite
     // Room components
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation(libs.ui.graphics)
     kapt("androidx.room:room-compiler:2.6.1")
 
 // Kotlin Extensions and Coroutines support for Room
