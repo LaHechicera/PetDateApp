@@ -1,31 +1,13 @@
 package com.example.petdateapp.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,26 +33,21 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
     LaunchedEffect(viewModel.mensaje.value) {
         val msg = viewModel.mensaje.value
         if (msg.isNotEmpty()) {
-            // Mostrar snackbar en una coroutine separada para controlar el tiempo exactamente
             coroutineScope.launch {
-                // showSnackbar es suspend, pero lo lanzamos en una coroutine para no bloquear este LaunchedEffect
                 snackbarHostState.showSnackbar(
                     message = msg,
                     withDismissAction = false
                 )
             }
 
-            // Espera para volver al inicio
             delay(1000)
 
-            // Si fue éxito, navegar y limpiar
             if (msg == "Datos registrados correctamente.") {
                 navController.navigate("home") {
                     popUpTo("registro") { inclusive = true }
                 }
             }
 
-            // Limpiar mensaje para que no reaparezca al volver
             viewModel.mensaje.value = ""
         }
     }
@@ -86,29 +63,33 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Registro del dueño", style = MaterialTheme.typography.headlineSmall.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ))
-                Spacer(modifier = Modifier.height(24.dp)
+                Text(
+                    "Registro del dueño",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 )
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Dueño
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+                        .background(Color.Transparent)
                         .padding(16.dp)
                 ) {
-                    Column{
+                    Column {
                         OutlinedTextField(
-                            value = viewModel.nombreDueno.value,
-                            onValueChange = { viewModel.nombreDueno.value = it },
+                            value = viewModel.correo.value,
+                            onValueChange = { viewModel.correo.value = it },
                             label = { Text("Nombre del dueño") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
                         )
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
@@ -117,7 +98,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             label = { Text("Teléfono") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -127,7 +111,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             label = { Text("Correo") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -138,7 +125,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             singleLine = true,
                             visualTransformation = PasswordVisualTransformation(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                     }
                 }
@@ -146,17 +136,19 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Mascota
-                Text("Registro de la mascota", style = MaterialTheme.typography.headlineSmall.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ))
+                Text(
+                    "Registro de la mascota",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+                        .background(Color.Transparent)
                         .padding(16.dp)
                 ) {
                     Column {
@@ -165,7 +157,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             onValueChange = { viewModel.nombreMascota.value = it },
                             label = { Text("Nombre de la mascota") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -174,7 +169,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             onValueChange = { viewModel.especie.value = it },
                             label = { Text("Especie (Ejemplo: Gato)") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -183,7 +181,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             onValueChange = { viewModel.raza.value = it },
                             label = { Text("Raza") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -193,7 +194,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             label = { Text("Edad (años)") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -203,26 +207,26 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                             label = { Text("Peso (kg)") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Transparent)
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // → Nota: aquí NO navegamos. Solo validamos.
                 val context = LocalContext.current
 
-                // Inicializar la BD UNA sola vez (ideal en LaunchedEffect o justo antes del botón)
                 LaunchedEffect(Unit) {
                     viewModel.initDB(context)
                 }
 
                 Button(
                     onClick = {
-                        viewModel.registrar() //valida y guarda
+                        viewModel.registrar()
                     },
-
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -234,20 +238,18 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 }
             }
 
-            // Snackbar flotante sobre el contenido
+            // Snackbar flotante
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 12.dp)
             ) { snackbarData ->
-                // Personalización simple: fondo verde para éxito, rojo para error
                 val isSuccess = snackbarData.visuals.message.contains("correctamente")
                 Surface(
                     color = if (isSuccess) Color(0xFF2E7D32) else Color(0xFFD32F2F),
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
                     Text(
                         text = snackbarData.visuals.message,
