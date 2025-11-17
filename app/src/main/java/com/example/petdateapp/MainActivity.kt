@@ -320,35 +320,6 @@ class MainActivity : ComponentActivity() {
                                         verticalArrangement = Arrangement.spacedBy(6.dp)
                                     ) {
                                         Text(
-                                            text = "Inicio de sesión",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp)
-                                                .clickable {
-                                                    expanded = false
-                                                    navController.navigate("login")
-                                                    Log.d("UserAction", "Navegar a Inicio de Sesión")
-                                                }
-                                        )
-                                        Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
-
-                                        Text(
-                                            text = "Registro de usuario",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp)
-                                                .clickable {
-                                                    expanded = false
-                                                    navController.navigate("registro")
-                                                    Log.d("UserAction", "Navegar a Registro de Usuario")
-                                                }
-                                        )
-
-                                        Text(
                                             text = "Cerrar sesión",
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface,
