@@ -20,16 +20,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.petdateapp.viewmodel.RegisterViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: NavController) {
+fun RegisterScreen(
+    viewModel: RegisterViewModel = viewModel(),
+    navController: NavController
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    // Observa cambios en el mensaje y muestra Snackbar + navega (si es éxito) después de 2s
+    // Inicializar la base de datos para el ViewModel
+    LaunchedEffect(Unit) {
+        viewModel.initDB(context)
+    }
+
+    // Observa cambios en el mensaje y muestra Snackbar + navega (si es éxito)
     LaunchedEffect(viewModel.mensaje.value) {
         val msg = viewModel.mensaje.value
         if (msg.isNotEmpty()) {
@@ -48,6 +58,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                 }
             }
 
+            // Limpiamos el mensaje para no repetir Snackbars
             viewModel.mensaje.value = ""
         }
     }
@@ -56,7 +67,9 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background //evita fondo negro
     ) {
-        Box {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Column(
                 modifier = Modifier
                     .padding(24.dp)
@@ -69,9 +82,10 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Dueño
+                // Datos del dueño
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,12 +93,13 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                         .padding(16.dp)
                 ) {
                     Column {
+                        // ✅ Corregido: este campo ahora usa nombreDueno
                         OutlinedTextField(
-                            value = viewModel.correo.value,
-                            onValueChange = { viewModel.correo.value = it },
+                            value = viewModel.nombreDueno.value,
+                            onValueChange = { viewModel.nombreDueno.value = it },
                             label = { Text("Nombre del dueño") },
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
@@ -103,6 +118,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(Color.Transparent)
                         )
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
@@ -116,6 +132,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(Color.Transparent)
                         )
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
@@ -135,93 +152,9 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Mascota
-                Text(
-                    "Registro de la mascota",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color.Transparent)
-                        .padding(16.dp)
-                ) {
-                    Column {
-                        OutlinedTextField(
-                            value = viewModel.nombreMascota.value,
-                            onValueChange = { viewModel.nombreMascota.value = it },
-                            label = { Text("Nombre de la mascota") },
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = viewModel.especie.value,
-                            onValueChange = { viewModel.especie.value = it },
-                            label = { Text("Especie (Ejemplo: Gato)") },
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = viewModel.raza.value,
-                            onValueChange = { viewModel.raza.value = it },
-                            label = { Text("Raza") },
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = viewModel.edad.value,
-                            onValueChange = { viewModel.edad.value = it },
-                            label = { Text("Edad (años)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = viewModel.peso.value,
-                            onValueChange = { viewModel.peso.value = it },
-                            label = { Text("Peso (kg)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                val context = LocalContext.current
-
-                LaunchedEffect(Unit) {
-                    viewModel.initDB(context)
-                }
+                // ⚠️ Sección de "Registro de la mascota" eliminada del flujo de registro.
+                // Más adelante se implementará una pantalla o flujo independiente
+                // para manejar las mascotas (por ejemplo, conectado a un microservicio).
 
                 Button(
                     onClick = {
@@ -234,7 +167,7 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("Registrar Mascota")
+                    Text("Registrar usuario")
                 }
             }
 
@@ -263,6 +196,8 @@ fun RegisterScreen(viewModel: RegisterViewModel = viewModel(), navController: Na
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun RegisterScreenPreview() { }
+fun RegisterScreenPreview() {
+    val navController = rememberNavController()
+    RegisterScreen(navController = navController)
+}

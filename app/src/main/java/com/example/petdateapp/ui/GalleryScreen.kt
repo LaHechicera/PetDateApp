@@ -1,5 +1,6 @@
 package com.example.petdateapp.ui
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -43,6 +44,11 @@ fun GalleryScreen(
     val picker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(6)
     ) { uris: List<Uri> ->
+        // Solicitar permisos persistentes para cada URI
+        uris.forEach { uri ->
+            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            context.contentResolver.takePersistableUriPermission(uri, flag)
+        }
         viewModel.addImages(uris) // al agregar, automáticamente persiste
     }
 

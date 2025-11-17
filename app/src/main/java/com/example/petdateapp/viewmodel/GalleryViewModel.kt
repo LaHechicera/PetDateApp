@@ -31,7 +31,7 @@ class GalleryViewModel : ViewModel() {
     private var userDataStore: UserDataStore? = null
     private var galleryRepository: GalleryRepository? = null
 
-    private var userEmail: String? = null // Correo del usuario activo
+    private var userEmail: String? = null // Correo del usuario activo (solo como referencia)
 
     /**
      * Inicializar DataStore y cargar imágenes del usuario.
@@ -47,11 +47,20 @@ class GalleryViewModel : ViewModel() {
         }
 
         // Cargar correo del usuario y luego cargar imágenes persistidas
+        // Alfred: ahora siempre preguntamos el correo actual al DataStore en lugar de confiar en userEmail previo.
         viewModelScope.launch {
-            userEmail = userDataStore?.userEmailFlow?.first()
+            val ds = userDataStore ?: return@launch
 
-            // Si no hay usuario guardado, no continuamos
-            val email = userEmail ?: return@launch
+            // Obtenemos el correo del usuario que está en sesión (si lo hay)
+            val email = ds.userEmailFlow.first()
+
+            if (email.isNullOrBlank()) {
+                userEmail = null
+                _images.clear()
+                return@launch
+            }
+
+            userEmail = email
 
             // Obtener las imágenes almacenadas y convertirlas a URI
             val savedUris = galleryRepository?.getUserGalleryOnce(email) ?: emptyList()
@@ -65,9 +74,7 @@ class GalleryViewModel : ViewModel() {
     fun canAddMore(): Boolean = _images.size < maxItems
     fun remainingSlots(): Int = (maxItems - _images.size).coerceAtLeast(0)
 
-
     // Agrega imágenes respetando: Máximo de 6 y Sin duplicados
-
     fun addImages(newUris: List<Uri>) {
         if (newUris.isEmpty() || !canAddMore()) return
 
@@ -96,11 +103,21 @@ class GalleryViewModel : ViewModel() {
      * Guardar el estado actual de la galería en DataStore.
      */
     private fun persistGallery() {
-        val email = userEmail ?: return // Si no hay usuario, no se guarda
+        val repo = galleryRepository ?: return
+        val ds = userDataStore ?: return
         val urisAsString = _images.map { it.toString() }
 
         viewModelScope.launch {
-            galleryRepository?.saveUserGallery(email, urisAsString)
+            // Alfred: aquí también preguntamos el correo actual directamente al DataStore.
+            val email = ds.userEmailFlow.first()
+
+            if (email.isNullOrBlank()) {
+                // No hay usuario logueado, no guardamos nada
+                return@launch
+            }
+
+            // Guardar la galería asociada a este correo
+            repo.saveUserGallery(email, urisAsString)
         }
     }
 }

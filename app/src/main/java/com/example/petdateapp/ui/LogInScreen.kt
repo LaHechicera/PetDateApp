@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row // <-- agregado para la fila del texto de registro
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton // <-- agregado para el enlace "Regístrate"
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -122,6 +124,32 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 👉 NUEVO: enlace para ir a la pantalla de registro debajo del botón de inicio de sesión
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "¿No tienes sesión?",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            TextButton(
+                onClick = {
+                    // Navegar a la pantalla de registro
+                    navController.navigate("registro")
+                }
+            ) {
+                Text(
+                    text = "Regístrate",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         // Mensaje (error o éxito)
         Text(
             viewModel.mensaje.value,
@@ -165,4 +193,3 @@ fun LoginScreen(
         }
     }
 }
-

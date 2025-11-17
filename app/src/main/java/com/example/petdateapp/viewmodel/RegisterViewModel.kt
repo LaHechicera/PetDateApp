@@ -10,12 +10,6 @@ import com.example.petdateapp.data.entity.UsuarioEntity
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    // Variables del formulario para mascota
-    val nombreMascota = mutableStateOf("")
-    val especie = mutableStateOf("")
-    val raza = mutableStateOf("")
-    val edad = mutableStateOf("")
-    val peso = mutableStateOf("")
 
     // Variables del formulario para dueño
     val nombreDueno = mutableStateOf("")
@@ -49,12 +43,11 @@ class RegisterViewModel : ViewModel() {
     // Función para validar campos
     fun validar() {
         mensaje.value = when {
-            // Validar campos vacíos incluyendo contraseña
-            nombreMascota.value.isBlank() || especie.value.isBlank() ||
-                    edad.value.isBlank() || peso.value.isBlank() ||
-                    nombreDueno.value.isBlank() || telefono.value.isBlank() ||
-                    correo.value.isBlank() || contrasena.value.isBlank() ->
-                "Completa todos los campos"
+            nombreDueno.value.isBlank() ||
+                    telefono.value.isBlank() ||
+                    correo.value.isBlank() ||
+                    contrasena.value.isBlank() ->
+                "Por favor, completa todos los campos."
 
             //Validación de correo
             !correo.value.contains("@") ->
@@ -71,14 +64,6 @@ class RegisterViewModel : ViewModel() {
             // Validación de longitud mínima del teléfono
             telefono.value.length < 8 ->
                 "El teléfono debe tener al menos 8 dígitos"
-
-            //Validación de edad
-            edad.value.toIntOrNull() == null ->
-                "La edad debe ser un número entero"
-
-            //Validación de peso
-            peso.value.toFloatOrNull() == null ->
-                "El peso debe ser un número, con o sin coma"
 
             else -> "Datos registrados correctamente."
         }
@@ -104,19 +89,6 @@ class RegisterViewModel : ViewModel() {
 
                 // Insertar usuario
                 db.usuarioDao().insert(usuarioEntity)
-
-                // 2) Crear entidad Mascota
-                val mascotaEntity = MascotaEntity(
-                    nombreMascota = nombreMascota.value,
-                    especie = especie.value,
-                    raza = raza.value,
-                    edad = edad.value.toInt(),
-                    peso = peso.value.toFloat(),
-                    correoDueno = correo.value
-                )
-
-                // Insertar mascota
-                db.mascotaDao().insert(mascotaEntity)
 
                 // Actualizamos el mensaje para la UI (éxito)
                 mensaje.value = "Datos registrados correctamente."
