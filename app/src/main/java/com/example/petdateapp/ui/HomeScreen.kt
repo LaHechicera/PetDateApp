@@ -22,9 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petdateapp.R
+import com.example.petdateapp.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel) {
+
+    val ownerName by viewModel.ownerName.collectAsState()
 
     var start by remember { mutableStateOf(false) }
 
@@ -51,11 +54,11 @@ fun HomeScreen() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .scale(scale),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.padding(top = 32.dp)
         ) {
 
             // Texto superior "Bienvenidos"
@@ -63,8 +66,13 @@ fun HomeScreen() {
                 visible = visible,
                 enter = fadeIn(tween(800)) + scaleIn(tween(800))
             ) {
+                val welcomeMessage = "Bienvenido a PetDate" + if (ownerName.isNotEmpty()) {
+                    " ${ownerName.replaceFirstChar { it.uppercase() }}!"
+                } else {
+                    "!"
+                }
                 Text(
-                    text = "Bienvenidos a PetDate!",
+                    text = welcomeMessage,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.2f
                     ),
