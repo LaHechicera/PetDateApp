@@ -269,7 +269,7 @@ class MainActivity : ComponentActivity() {
                                     .padding(innerPadding)
                             ) {
                                 composable("home") {
-                                    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(userDataStore))
+                                    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(context.applicationContext))
                                     HorizontalPager(
                                         state = pagerState,
                                         modifier = Modifier.fillMaxSize()

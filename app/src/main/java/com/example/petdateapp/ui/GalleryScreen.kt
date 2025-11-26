@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +35,8 @@ fun GalleryScreen(
 ) {
     // Obtener el contexto para inicialización de persistencia
     val context = LocalContext.current
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
 
     // Inicializar DataStore + Repository + cargar imágenes persistidas
     LaunchedEffect(Unit) {
@@ -126,7 +129,8 @@ fun GalleryScreen(
                     if (uri != null) {
                         ImageCard(
                             uri = uri,
-                            onRemove = { viewModel.removeAt(index) } // elimina y persiste
+                            onRemove = { viewModel.removeAt(index) }, // elimina y persiste
+                            onClick = { selectedImageUri = uri }
                         )
                     } else {
                         PlaceholderCard(
@@ -144,19 +148,27 @@ fun GalleryScreen(
             }
         }
     }
+    if (selectedImageUri != null) {
+        FullScreenImagePopup(
+            imageUri = selectedImageUri!!,
+            onDismiss = { selectedImageUri = null }
+        )
+    }
 }
 
 @Composable
 //Tarjeta para una imagen con botón de quitar.
 private fun ImageCard(
     uri: Uri,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .aspectRatio(1f) //mantiene forma cuadrada
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
     ) {
 
         AsyncImage(
@@ -203,6 +215,40 @@ private fun PlaceholderCard(
                 if (enabled) "Agregar" else "Sin cupo",
                 style = MaterialTheme.typography.labelLarge
             )
+        }
+    }
+}
+@Composable
+fun FullScreenImagePopup(imageUri: Uri, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                .clickable(onClick = onDismiss),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = imageUri,
+                contentDescription = "Imagen en pantalla completa",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Fit
+            )
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Cerrar",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     }
 }
