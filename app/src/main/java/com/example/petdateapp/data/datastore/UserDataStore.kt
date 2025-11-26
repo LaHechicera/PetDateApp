@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.map
  * - Esto permite que otras pantallas (como Agenda) sepan qué usuario está activo.
  */
 
-// 1. Inicializamos DataStore (Singleton) a nivel de Context
-private val Context.dataStore by preferencesDataStore(name = "user_prefs")
+// 1. Inicializamos DataStore (Singleton) a nivel de Context y lo hacemos 'internal'
+//    para que sea visible por otras clases como UserManager.
+internal val Context.dataStore by preferencesDataStore(name = "user_prefs")
 
 class UserDataStore(private val context: Context) {
 
