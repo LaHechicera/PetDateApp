@@ -3,49 +3,58 @@ package com.example.petdateapp.data.datastore
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+private val Context.profileDataStore by preferencesDataStore("profile_preferences")
+
 data class ProfileData(
-    val name: String,
-    val phone: String,
-    val gender: String,
-    val imageUri: String
+    val nombre: String,
+    val telefono: String,
+    val genero: String,
+    val imagenUri: String?
 )
 
 class ProfileDataStore(context: Context) {
+    private val dataStore = context.profileDataStore
 
-    private val appContext = context.applicationContext
+    private fun userKey(key: String, email: String) = "${key}_$email"
 
-    private val nameKey = stringPreferencesKey("profile_name")
-    private val phoneKey = stringPreferencesKey("profile_phone")
-    private val genderKey = stringPreferencesKey("profile_gender")
-    private val imageUriKey = stringPreferencesKey("profile_image_uri")
-
-    val profileDataFlow: Flow<ProfileData> = appContext.dataStore.data
-        .map {
-            val name = it[nameKey] ?: ""
-            val phone = it[phoneKey] ?: ""
-            val gender = it[genderKey] ?: "Otro"
-            val imageUri = it[imageUriKey] ?: ""
-            ProfileData(name, phone, gender, imageUri)
-        }
-
-    suspend fun saveProfile(profileData: ProfileData) {
-        appContext.dataStore.edit {
-            it[nameKey] = profileData.name
-            it[phoneKey] = profileData.phone
-            it[genderKey] = profileData.gender
-            it[imageUriKey] = profileData.imageUri
+    suspend fun saveProfileData(email: String, nombre: String, telefono: String, genero: String, imagenUri: String?) {
+        dataStore.edit { preferences ->
+            if (email.isNotBlank()) {
+                preferences[stringPreferencesKey(userKey("nombre", email))] = nombre
+                preferences[stringPreferencesKey(userKey("telefono", email))] = telefono
+                preferences[stringPreferencesKey(userKey("genero", email))] = genero
+                preferences[stringPreferencesKey(userKey("imagen_uri", email))] = imagenUri ?: ""
+            }
         }
     }
 
-    suspend fun clearProfileData() {
-        appContext.dataStore.edit {
-            it.remove(nameKey)
-            it.remove(phoneKey)
-            it.remove(genderKey)
-            it.remove(imageUriKey)
+    fun getProfileData(email: String): Flow<ProfileData?> {
+        return dataStore.data.map { preferences ->
+            if (email.isNotBlank()) {
+                ProfileData(
+                    nombre = preferences[stringPreferencesKey(userKey("nombre", email))] ?: "",
+                    telefono = preferences[stringPreferencesKey(userKey("telefono", email))] ?: "",
+                    genero = preferences[stringPreferencesKey(userKey("genero", email))] ?: "",
+                    imagenUri = preferences[stringPreferencesKey(userKey("imagen_uri", email))].takeIf { it?.isNotBlank() ?: false }
+                )
+            } else {
+                null
+            }
+        }
+    }
+
+    suspend fun clearProfileData(email: String) {
+        dataStore.edit { preferences ->
+            if (email.isNotBlank()) {
+                preferences.remove(stringPreferencesKey(userKey("nombre", email)))
+                preferences.remove(stringPreferencesKey(userKey("telefono", email)))
+                preferences.remove(stringPreferencesKey(userKey("genero", email)))
+                preferences.remove(stringPreferencesKey(userKey("imagen_uri", email)))
+            }
         }
     }
 }

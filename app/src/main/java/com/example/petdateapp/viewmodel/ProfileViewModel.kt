@@ -3,22 +3,22 @@ package com.example.petdateapp.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.petdateapp.data.datastore.ProfileData
 import com.example.petdateapp.data.datastore.ProfileDataStore
 import com.example.petdateapp.data.datastore.UserDataStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 data class ProfileState(
-    val name: String = "",
-    val email: String = "",
-    val phone: String = "",
-    val gender: String = "",
-    val imageUri: String = ""
+    val nombre: String = "",
+    val telefono: String = "",
+    val genero: String = "",
+    val imagenUri: String? = null,
+    val email: String = ""
 )
 
 class ProfileViewModel(
@@ -31,39 +31,54 @@ class ProfileViewModel(
 
     init {
         viewModelScope.launch {
-            // Combine flows to get user email and profile data
-            userDataStore.userEmailFlow.combine(profileDataStore.profileDataFlow) { email, profileData ->
-                ProfileState(
-                    name = profileData.name,
-                    email = email ?: "",
-                    phone = profileData.phone,
-                    gender = profileData.gender,
-                    imageUri = profileData.imageUri
-                )
-            }.collect { combinedState ->
-                _profileState.value = combinedState
+            userDataStore.userEmailFlow.flatMapLatest { email ->
+                if (email != null) {
+                    profileDataStore.getProfileData(email).map { profileData ->
+                        ProfileState(
+                            nombre = profileData?.nombre ?: "",
+                            telefono = profileData?.telefono ?: "",
+                            genero = profileData?.genero ?: "",
+                            imagenUri = profileData?.imagenUri,
+                            email = email
+                        )
+                    }
+                } else {
+                    MutableStateFlow(ProfileState())
+                }
+            }.collect { state ->
+                _profileState.value = state
             }
         }
     }
 
-    fun updateProfile(name: String, phone: String, gender: String) {
+    fun updateProfile(nombre: String, telefono: String, genero: String) {
         viewModelScope.launch {
-            val currentProfileData = profileState.value
-            val updatedProfileData = ProfileData(
-                name = name,
-                phone = phone,
-                gender = gender,
-                imageUri = currentProfileData.imageUri // Keep the existing image URI
-            )
-            profileDataStore.saveProfile(updatedProfileData)
+            val email = userDataStore.userEmailFlow.first()
+            if (email != null) {
+                profileDataStore.saveProfileData(
+                    email = email,
+                    nombre = nombre,
+                    telefono = telefono,
+                    genero = genero,
+                    imagenUri = _profileState.value.imagenUri
+                )
+            }
         }
     }
 
     fun updateProfileImage(imageUri: Uri) {
         viewModelScope.launch {
-            val currentProfileData = profileDataStore.profileDataFlow.first()
-            val updatedProfileData = currentProfileData.copy(imageUri = imageUri.toString())
-            profileDataStore.saveProfile(updatedProfileData)
+            val email = userDataStore.userEmailFlow.first()
+            if (email != null) {
+                val currentData = _profileState.value
+                profileDataStore.saveProfileData(
+                    email = email,
+                    nombre = currentData.nombre,
+                    telefono = currentData.telefono,
+                    genero = currentData.genero,
+                    imagenUri = imageUri.toString()
+                )
+            }
         }
     }
 }
