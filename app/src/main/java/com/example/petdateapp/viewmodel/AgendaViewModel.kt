@@ -12,8 +12,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.atomic.AtomicLong
 
 class AgendaViewModel : ViewModel() {
 
@@ -82,7 +80,6 @@ class AgendaViewModel : ViewModel() {
     fun addAppointment(date: LocalDate, time: LocalTime, description: String) {
         val correo = userEmail ?: return
         val desc = description.trim().ifEmpty { "Cita veterinaria" }
-        val dt = LocalDateTime.of(date, time)
 
         val entity = AgendaEntity(
             correoDueno = correo,
