@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.petdateapp.data.PetRepository
 import com.example.petdateapp.ui.AgendaScreen
 import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val context = LocalContext.current
                 val userDataStore = UserDataStore(context)
+                val petRepository = PetRepository()
                 val initialRoute by produceState<String?>(initialValue = null) {
                     val userEmail = userDataStore.userEmailFlow.first()
                     value = if (userEmail.isNullOrBlank()) "login" else "home"
@@ -269,7 +271,7 @@ class MainActivity : ComponentActivity() {
                                     .padding(innerPadding)
                             ) {
                                 composable("home") {
-                                    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(context.applicationContext))
+                                    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(userDataStore, petRepository))
                                     HorizontalPager(
                                         state = pagerState,
                                         modifier = Modifier.fillMaxSize()
