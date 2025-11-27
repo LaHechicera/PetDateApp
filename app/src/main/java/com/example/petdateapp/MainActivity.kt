@@ -301,13 +301,17 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                                 composable("login") {
-                                    LoginScreen(navController = navController)
+                                    val logInViewModel: LogInViewModel = viewModel()
+                                    LoginScreen(
+                                        navController = navController,
+                                        logInViewModel = logInViewModel
+                                    )
                                 }
                                 composable("registro") {
                                     RegisterScreen(navController = navController)
                                 }
                                 composable("profile") {
-                                     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(userDataStore, profileDataStore))
+                                    val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(userDataStore, profileDataStore))
                                     ProfileScreen(profileViewModel)
                                 }
                             }

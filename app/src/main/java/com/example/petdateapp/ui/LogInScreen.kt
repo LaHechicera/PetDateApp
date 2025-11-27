@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row // <-- agregado para la fila del texto de registro
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton // <-- agregado para el enlace "Regístrate"
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,23 +38,20 @@ import com.example.petdateapp.R
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: LogInViewModel = viewModel()
+    logInViewModel: LogInViewModel
 ) {
     var showWelcomeDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    // Detectar tema del sistema
-    val isDarkTheme = isSystemInDarkTheme() // Detectar tema oscuro o claro
-    val logoRes = if (isDarkTheme) com.example.petdateapp.R.drawable.logo_dark else R.drawable.logo_light // Seleccionar logo según tema
+    val isDarkTheme = isSystemInDarkTheme()
+    val logoRes = if (isDarkTheme) com.example.petdateapp.R.drawable.logo_dark else R.drawable.logo_light
 
-    // Inicializar la base de datos una vez
     LaunchedEffect(Unit) {
-        viewModel.initDB(context)
+        logInViewModel.initDB(context)
     }
 
-    // Escuchar cambios en el mensaje del ViewModel
-    LaunchedEffect(viewModel.mensaje.value) {
-        if (viewModel.mensaje.value == "Ingreso sesión exitosa") {
+    LaunchedEffect(logInViewModel.mensaje.value) {
+        if (logInViewModel.mensaje.value == "Ingreso sesión exitosa") {
             showWelcomeDialog = true
         }
     }
@@ -65,24 +62,22 @@ fun LoginScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top //Para mostrar logo arriba
+        verticalArrangement = Arrangement.Top
     ) {
 
-        //Logo
         Image(
             painter = painterResource(id = logoRes),
             contentDescription = "Logo PetDate",
             modifier = Modifier
-                .padding(top = 10.dp, bottom = 10.dp) //Mueve el logo hacia abajo
-                .size(160.dp), //Aumenta tamaño del logo
+                .padding(top = 10.dp, bottom = 10.dp)
+                .size(160.dp),
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Campo de correo
         OutlinedTextField(
-            value = viewModel.correo.value,
-            onValueChange = { viewModel.correo.value = it },
+            value = logInViewModel.correo.value,
+            onValueChange = { logInViewModel.correo.value = it },
             label = { Text("Correo") },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
@@ -93,10 +88,9 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Campo de contraseña
         OutlinedTextField(
-            value = viewModel.clave.value,
-            onValueChange = { viewModel.clave.value = it },
+            value = logInViewModel.clave.value,
+            onValueChange = { logInViewModel.clave.value = it },
             label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -108,10 +102,9 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Botón de inicio de sesión (solo llama a validar)
         Button(
             onClick = {
-                viewModel.validar() // Aquí se hace la validación y consulta en BD
+                logInViewModel.validar()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -124,7 +117,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 👉 NUEVO: enlace para ir a la pantalla de registro debajo del botón de inicio de sesión
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -136,8 +128,7 @@ fun LoginScreen(
             )
             TextButton(
                 onClick = {
-                    // Navegar a la pantalla de registro
-                    navController.navigate("registro")
+                    navController.navigate("register")
                 }
             ) {
                 Text(
@@ -150,10 +141,9 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Mensaje (error o éxito)
         Text(
-            viewModel.mensaje.value,
-            color = if (viewModel.mensaje.value == "Ingreso sesión exitosa")
+            logInViewModel.mensaje.value,
+            color = if (logInViewModel.mensaje.value == "Ingreso sesión exitosa")
                 MaterialTheme.colorScheme.primary
             else
                 MaterialTheme.colorScheme.error,
@@ -161,10 +151,9 @@ fun LoginScreen(
         )
     }
 
-    // Popup de bienvenida y navegación automática
     if (showWelcomeDialog) {
         AlertDialog(
-            onDismissRequest = {}, //Evitar cerrar manualmente
+            onDismissRequest = {}, 
             confirmButton = {},
             title = {
                 Text(
@@ -183,9 +172,8 @@ fun LoginScreen(
             containerColor = MaterialTheme.colorScheme.surface
         )
 
-        //  Retraso y navegación
         LaunchedEffect(Unit) {
-            delay(2000) // tiempo del popup
+            delay(2000)
             showWelcomeDialog = false
             navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
