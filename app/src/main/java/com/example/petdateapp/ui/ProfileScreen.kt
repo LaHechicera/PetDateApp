@@ -7,6 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.Wc
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -74,7 +79,13 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
             onValueChange = { nombre = it },
             label = { Text("Nombre") },
             enabled = isEditing,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Person,
+                    contentDescription = "Nombre"
+                )
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -83,7 +94,13 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
             onValueChange = {},
             label = { Text("Correo Electrónico") },
             enabled = false,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Email,
+                    contentDescription = "Correo Electrónico"
+                )
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -92,7 +109,13 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
             onValueChange = { telefono = it },
             label = { Text("Teléfono") },
             enabled = isEditing,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Phone,
+                    contentDescription = "Teléfono"
+                )
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -108,7 +131,13 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
                 label = { Text("Género") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = genderMenuExpanded) },
                 modifier = Modifier.menuAnchor().fillMaxWidth(),
-                enabled = isEditing
+                enabled = isEditing,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Wc,
+                        contentDescription = "Género"
+                    )
+                }
             )
             ExposedDropdownMenu(
                 expanded = genderMenuExpanded && isEditing,
