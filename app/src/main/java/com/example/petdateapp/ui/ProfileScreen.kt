@@ -16,35 +16,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.petdateapp.R
 import com.example.petdateapp.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewModel()
+fun ProfileScreen(profileViewModel: ProfileViewModel) {
     val profileState by profileViewModel.profileState.collectAsState()
     var isEditing by remember { mutableStateOf(false) }
 
-    var name by remember { mutableStateOf(profileState.name) }
-    var phone by remember { mutableStateOf(profileState.phone) }
-    var gender by remember { mutableStateOf(profileState.gender) }
+    var nombre by remember { mutableStateOf(profileState.nombre) }
+    var telefono by remember { mutableStateOf(profileState.telefono) }
+    var genero by remember { mutableStateOf(profileState.genero) }
     var genderMenuExpanded by remember { mutableStateOf(false) }
     val genderOptions = listOf("Masculino", "Femenino", "Otro")
 
-    // Image picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { profileViewModel.updateProfileImage(it) }
     }
 
-    // Update local states when profileState changes from ViewModel
     LaunchedEffect(profileState) {
-        name = profileState.name
-        phone = profileState.phone
-        gender = profileState.gender
+        nombre = profileState.nombre
+        telefono = profileState.telefono
+        genero = profileState.genero
     }
 
     Column(
@@ -53,7 +50,6 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile Image
         Box(modifier = Modifier
             .size(150.dp)
             .clip(CircleShape)
@@ -63,7 +59,7 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
             }
         ) {
             AsyncImage(
-                model = profileState.imageUri.ifEmpty { R.drawable.ic_launcher_foreground },
+                model = profileState.imagenUri ?: R.drawable.ic_launcher_foreground,
                 contentDescription = "Profile Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
@@ -73,17 +69,15 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Name
         TextField(
-            value = name,
-            onValueChange = { name = it },
+            value = nombre,
+            onValueChange = { nombre = it },
             label = { Text("Nombre") },
             enabled = isEditing,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Email (Not editable)
         TextField(
             value = profileState.email,
             onValueChange = {},
@@ -93,24 +87,22 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Phone
         TextField(
-            value = phone,
-            onValueChange = { phone = it },
+            value = telefono,
+            onValueChange = { telefono = it },
             label = { Text("Teléfono") },
             enabled = isEditing,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Gender
         ExposedDropdownMenuBox(
             expanded = genderMenuExpanded,
-            onExpandedChange = { genderMenuExpanded = it },
+            onExpandedChange = { genderMenuExpanded = it }, 
             modifier = Modifier.fillMaxWidth()
         ) {
             TextField(
-                value = gender,
+                value = genero,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Género") },
@@ -126,7 +118,7 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
                     DropdownMenuItem(
                         text = { Text(option) },
                         onClick = {
-                            gender = option
+                            genero = option
                             genderMenuExpanded = false
                         }
                     )
@@ -135,11 +127,10 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) { // Removed default viewM
         }
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Edit/Save Button
         Button(
             onClick = {
                 if (isEditing) {
-                    profileViewModel.updateProfile(name, phone, gender)
+                    profileViewModel.updateProfile(nombre, telefono, genero)
                 }
                 isEditing = !isEditing
             },
