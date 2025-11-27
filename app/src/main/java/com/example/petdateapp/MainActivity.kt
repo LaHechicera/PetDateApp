@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,8 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,16 +36,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.petdateapp.data.PetRepository
+import com.example.petdateapp.data.datastore.ProfileDataStore
 import com.example.petdateapp.ui.AgendaScreen
 import com.example.petdateapp.ui.GalleryScreen
 import com.example.petdateapp.ui.HomeScreen
 import com.example.petdateapp.ui.LoginScreen
+import com.example.petdateapp.ui.ProfileScreen
 import com.example.petdateapp.ui.RegisterScreen
 import com.example.petdateapp.ui.theme.AppTheme
 import com.example.petdateapp.data.datastore.UserDataStore
 import com.example.petdateapp.viewmodel.HomeViewModel
 import com.example.petdateapp.viewmodel.HomeViewModelFactory
 import com.example.petdateapp.viewmodel.LogInViewModel
+import com.example.petdateapp.viewmodel.ProfileViewModel
+import com.example.petdateapp.viewmodel.ProfileViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -61,6 +68,7 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val context = LocalContext.current
                 val userDataStore = UserDataStore(context)
+                val profileDataStore = ProfileDataStore(context)
                 val petRepository = PetRepository()
                 val initialRoute by produceState<String?>(initialValue = null) {
                     val userEmail = userDataStore.userEmailFlow.first()
@@ -167,7 +175,10 @@ class MainActivity : ComponentActivity() {
                                                                 launchSingleTop = true
                                                             }
                                                         }
-                                                        pagerState.animateScrollToPage(0)
+                                                        pagerState.animateScrollToPage(
+                                                            page = 0,
+                                                            animationSpec = tween(durationMillis = 500)
+                                                        )
                                                     }
                                                 },
                                                 label = {
@@ -201,7 +212,10 @@ class MainActivity : ComponentActivity() {
                                                                 launchSingleTop = true
                                                             }
                                                         }
-                                                        pagerState.animateScrollToPage(1)
+                                                        pagerState.animateScrollToPage(
+                                                            page = 1,
+                                                            animationSpec = tween(durationMillis = 500)
+                                                        )
                                                     }
                                                 },
                                                 label = {
@@ -235,7 +249,10 @@ class MainActivity : ComponentActivity() {
                                                                 launchSingleTop = true
                                                             }
                                                         }
-                                                        pagerState.animateScrollToPage(2)
+                                                        pagerState.animateScrollToPage(
+                                                            page = 2,
+                                                            animationSpec = tween(durationMillis = 500)
+                                                        )
                                                     }
                                                 },
                                                 label = {
@@ -289,6 +306,10 @@ class MainActivity : ComponentActivity() {
                                 composable("registro") {
                                     RegisterScreen(navController = navController)
                                 }
+                                composable("profile") {
+                                     val profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(userDataStore, profileDataStore))
+                                    ProfileScreen(profileViewModel)
+                                }
                             }
                         }
 
@@ -321,10 +342,32 @@ class MainActivity : ComponentActivity() {
                                             .padding(vertical = 6.dp, horizontal = 10.dp),
                                         verticalArrangement = Arrangement.spacedBy(6.dp)
                                     ) {
-                                        Text(
-                                            text = "Cerrar sesión",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurface,
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp)
+                                                .clickable {
+                                                    expanded = false
+                                                    navController.navigate("profile")
+                                                    Log.d("UserAction", "Navegando a Perfil")
+                                                }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.AccountCircle,
+                                                contentDescription = "Icono de perfil",
+                                                tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = "Mi Perfil",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(vertical = 8.dp)
@@ -342,8 +385,19 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                     Log.d("UserAction", "Usuario cerró sesión")
                                                 }
-                                        )
-
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.ExitToApp,
+                                                contentDescription = "Icono de cerrar sesión",
+                                                tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = "Cerrar sesión",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
                                     }
                                 }
                             }
