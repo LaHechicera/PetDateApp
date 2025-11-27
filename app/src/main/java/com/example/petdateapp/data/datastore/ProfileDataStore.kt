@@ -39,4 +39,13 @@ class ProfileDataStore(context: Context) {
             it[imageUriKey] = profileData.imageUri
         }
     }
+
+    suspend fun clearProfileData() {
+        appContext.dataStore.edit {
+            it.remove(nameKey)
+            it.remove(phoneKey)
+            it.remove(genderKey)
+            it.remove(imageUriKey)
+        }
+    }
 }

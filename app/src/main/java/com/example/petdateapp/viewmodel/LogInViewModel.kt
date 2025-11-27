@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petdateapp.data.database.AppDatabase
+import com.example.petdateapp.data.datastore.ProfileDataStore
 import com.example.petdateapp.data.datastore.UserDataStore
 import kotlinx.coroutines.launch
 
@@ -19,6 +20,7 @@ class LogInViewModel : ViewModel() {
 
     // DATASTORE
     private var dataStore: UserDataStore? = null
+    private var profileDataStore: ProfileDataStore? = null
 
     // Inicializamos BD + DataStore
     fun initDB(context: Context) {
@@ -27,6 +29,9 @@ class LogInViewModel : ViewModel() {
         }
         if (dataStore == null) {
             dataStore = UserDataStore(context)
+        }
+        if (profileDataStore == null) {
+            profileDataStore = ProfileDataStore(context)
         }
     }
 
