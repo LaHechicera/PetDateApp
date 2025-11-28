@@ -128,7 +128,7 @@ fun LoginScreen(
             )
             TextButton(
                 onClick = {
-                    navController.navigate("register")
+                    navController.navigate("registro")
                 }
             ) {
                 Text(
