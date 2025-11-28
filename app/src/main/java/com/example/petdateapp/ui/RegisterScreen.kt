@@ -53,9 +53,7 @@ fun RegisterScreen(
             delay(1000)
 
             if (msg == "Datos registrados correctamente.") {
-                navController.navigate("home") {
-                    popUpTo("registro") { inclusive = true }
-                }
+                navController.popBackStack()
             }
 
             // Limpiamos el mensaje para no repetir Snackbars
