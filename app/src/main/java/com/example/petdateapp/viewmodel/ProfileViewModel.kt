@@ -66,7 +66,8 @@ class ProfileViewModel(
         }
     }
 
-    fun updateProfileImage(imageUri: Uri) {
+    fun updateProfileImage(imagePath: String) {
+        _profileState.value = _profileState.value.copy(imagenUri = imagePath)
         viewModelScope.launch {
             val email = userDataStore.userEmailFlow.first()
             if (email != null) {
@@ -76,7 +77,7 @@ class ProfileViewModel(
                     nombre = currentData.nombre,
                     telefono = currentData.telefono,
                     genero = currentData.genero,
-                    imagenUri = imageUri.toString()
+                    imagenUri = imagePath
                 )
             }
         }
