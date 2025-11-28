@@ -1,5 +1,6 @@
 package com.example.petdateapp.ui
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,11 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.petdateapp.R
 import com.example.petdateapp.viewmodel.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,10 +43,22 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
     var genderMenuExpanded by remember { mutableStateOf(false) }
     val genderOptions = listOf("Masculino", "Femenino", "Otro")
 
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let { profileViewModel.updateProfileImage(it) }
+        uri?.let {
+            if (profileState.email.isNotBlank()) {
+                coroutineScope.launch(Dispatchers.IO) {
+                    val filePath = saveImageToInternalStorage(context, it, profileState.email)
+                    filePath?.let { path ->
+                        profileViewModel.updateProfileImage(path)
+                    }
+                }
+            }
+        }
     }
 
     LaunchedEffect(profileState) {
@@ -167,5 +185,24 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
         ) {
             Text(if (isEditing) "Guardar Cambios" else "Modificar Perfil")
         }
+    }
+}
+
+private fun saveImageToInternalStorage(context: Context, uri: Uri, userEmail: String): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val safeEmail = userEmail.replace(Regex("[^a-zA-Z0-9]"), "_")
+        val fileName = "profile_image_$safeEmail.jpg"
+        val file = File(context.filesDir, fileName)
+        val outputStream = FileOutputStream(file)
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
