@@ -2,7 +2,7 @@ package com.example.petdateapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF6E5E00)
+val primaryLight = Color(0xFFD9BE4D)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFF1D000)
 val onPrimaryContainerLight = Color(0xFF685900)
@@ -18,12 +18,12 @@ val errorLight = Color(0xFF96473F)
 val onErrorLight = Color(0xFFFFFFFF)
 val errorContainerLight = Color(0xFFFF9B90)
 val onErrorContainerLight = Color(0xFF79302A)
-val backgroundLight = Color(0xFFFFF9ED)
-val onBackgroundLight = Color(0xFF6B593D)
-val surfaceLight = Color(0xFFFDF8F7)
+val backgroundLight = Color(0xFFFFFFFF)
+val onBackgroundLight = Color(0xFF120B06)
+val surfaceLight = Color(0xFFFFFCFC)
 val onSurfaceLight = Color(0xFF1C1B1B)
-val surfaceVariantLight = Color(0xFFE9E2D5)
-val onSurfaceVariantLight = Color(0xFF4A463D)
+val surfaceVariantLight = Color(0xFFCDADAB)
+val onSurfaceVariantLight = Color(0xFF120B06)
 val outlineLight = Color(0xFF7B776C)
 val outlineVariantLight = Color(0xFFCCC6B9)
 val scrimLight = Color(0xFF000000)
@@ -110,28 +110,30 @@ val surfaceContainerLightHighContrast = Color(0xFFE5E2E0)
 val surfaceContainerHighLightHighContrast = Color(0xFFD7D4D2)
 val surfaceContainerHighestLightHighContrast = Color(0xFFC9C6C5)
 
-val primaryDark = Color(0xFFFFEEA7) //amarillo palido fondo de tus botones principales
-val onPrimaryDark = Color(0xFF393000) // marron oscuro El texto "Guardar" dentro de tu botón principal de color amarillo pálido
+
+//Colores en tema DARK
+val primaryDark = Color(0xFFC2B872) //amarillo palido fondo de tus botones principales
+val onPrimaryDark = Color(0xFF120B06) // marron oscuro El texto "Guardar" dentro de tu botón principal de color amarillo pálido
 val primaryContainerDark = Color(0xFFF1D000)
 val onPrimaryContainerDark = Color(0xFF685900)
 val secondaryDark = Color(0xFFE2C62C) // para filtros, botones secundarios, etc.
 val onSecondaryDark = Color(0xFF393000)
-val secondaryContainerDark = Color(0xFFC5AA00)
+val secondaryContainerDark = Color(0xFFC2B872)
 val onSecondaryContainerDark = Color(0xFF4A3F00)
 val tertiaryDark = Color(0xFFFDC72D) // para filtros, botones secundarios, etc.
 val onTertiaryDark = Color(0xFF3E2E00)
 val tertiaryContainerDark = Color(0xFFDEAC00)
 val onTertiaryContainerDark = Color(0xFF584200)
-val errorDark = Color(0xFFFFC3BC) // ayuda de un campo de contraseña incorrecta
+val errorDark = Color(0xFFDA6D62) // ayuda de un campo de contraseña incorrecta
 val onErrorDark = Color(0xFF5B1A15)
 val errorContainerDark = Color(0xFFFF9B90)
 val onErrorContainerDark = Color(0xFF79302A)
-val backgroundDark = Color(0xFF52360F) // color del fondo de todas tus pantallas
-val onBackgroundDark = Color(0xFFE9E2D0) // color del texto que pones directamente sobre el fondo
-val surfaceDark = Color(0xFF141313) // color de las "superficies" tarjetas o diálogos.
-val onSurfaceDark = Color(0xFFE5E2E0) // texto y los iconos dentro de una Card.
-val surfaceVariantDark = Color(0xFFA18159)
-val onSurfaceVariantDark = Color(0xFFCCC6B9)
+val backgroundDark = Color(0xFF64504A) // color del fondo de todas tus pantallas
+val onBackgroundDark = Color(0xFF120B06) // color del texto que pones directamente sobre el fondo
+val surfaceDark = Color(0xFFC2B872) // color de las "superficies" tarjetas o diálogos.
+val onSurfaceDark = Color(0xFF120B06) // texto y los iconos dentro de una Card.
+val surfaceVariantDark = Color( 0xFFCEB7AB)
+val onSurfaceVariantDark = Color(0xFF120B06) // color letras top y navbar
 val outlineDark = Color(0xFF959085) // color para los bordes y las líneas divisorias
 val outlineVariantDark = Color(0xFF4A463D)
 val scrimDark = Color(0xFF000000)
@@ -141,7 +143,7 @@ val inversePrimaryDark = Color(0xFF6E5E00)
 val surfaceDimDark = Color(0xFF141313)
 val surfaceBrightDark = Color(0xFF3A3938)
 val surfaceContainerLowestDark = Color(0xFF0E0E0E)
-val surfaceContainerLowDark = Color(0xFF1C1B1B)
+val surfaceContainerLowDark = Color(0xFFC2B872)
 val surfaceContainerDark = Color(0xFF201F1F)
 val surfaceContainerHighDark = Color(0xFF2B2A29)
 val surfaceContainerHighestDark = Color(0xFF353434)
@@ -217,4 +219,3 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF201F1F)
 val surfaceContainerDarkHighContrast = Color(0xFF313030)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3C3B3B)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF484646)
-

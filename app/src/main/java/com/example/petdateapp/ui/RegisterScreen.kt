@@ -1,6 +1,7 @@
 package com.example.petdateapp.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,6 +62,17 @@ fun RegisterScreen(
         }
     }
 
+    val outlinedTextFieldColors = if (isSystemInDarkTheme()) {
+        OutlinedTextFieldDefaults.colors(
+            focusedLabelColor = Color(0xFFC2B872),
+            unfocusedLabelColor = Color(0xFFC2B872),
+            focusedTextColor = Color(0xFFC2B872),
+            unfocusedTextColor = Color(0xFFC2B872)
+        )
+    } else {
+        OutlinedTextFieldDefaults.colors()
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background //evita fondo negro
@@ -100,7 +112,8 @@ fun RegisterScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(8.dp)),
+                            colors = outlinedTextFieldColors
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -114,7 +127,8 @@ fun RegisterScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
+                                .background(Color.Transparent),
+                            colors = outlinedTextFieldColors
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -128,7 +142,8 @@ fun RegisterScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
+                                .background(Color.Transparent),
+                            colors = outlinedTextFieldColors
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -143,7 +158,8 @@ fun RegisterScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.Transparent)
+                                .background(Color.Transparent),
+                            colors = outlinedTextFieldColors
                         )
                     }
                 }

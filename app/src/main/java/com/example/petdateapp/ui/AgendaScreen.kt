@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.text.format.DateFormat
 import android.view.Surface
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,22 +13,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -50,8 +40,6 @@ fun AgendaScreen(
         vm.init(context) // Carga automática de citas del usuario logueado
     }
 
-
-    // Estado para el flujo de creación
     var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
     var pendingTime by remember { mutableStateOf<LocalTime?>(null) }
     var showDescDialog by remember { mutableStateOf(false) }
@@ -79,14 +67,12 @@ fun AgendaScreen(
         val dp = DatePickerDialog(
             context,
             { _, y, m, d ->
-                // m es 0-11
                 launchTimePicker(LocalDate.of(y, m + 1, d))
             },
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)
         )
-        // Lunes como primer día
         dp.setOnShowListener { dp.datePicker.firstDayOfWeek = Calendar.MONDAY }
         dp.show()
     }
@@ -126,7 +112,6 @@ fun AgendaScreen(
             }
         }
     ) { padding ->
-        // Lista de citas
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -142,7 +127,6 @@ fun AgendaScreen(
             }
         }
 
-        // Diálogo de descripción (último paso)
         if (showDescDialog) {
             AlertDialog(
                 onDismissRequest = {
@@ -178,12 +162,11 @@ fun AgendaScreen(
                             value = desc,
                             onValueChange = { desc = it },
                             singleLine = true,
-                            label = { Text("Descripción de la cita") },      //label visible
-                            placeholder = { Text("Ej: vacuna antirrábica") }, //ayuda clara
+                            label = { Text("Descripción de la cita") },
+                            placeholder = { Text("Ej: vacuna antirrábica") },
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Resumen de fecha/hora elegidas
                         val is24h = DateFormat.is24HourFormat(context)
                         val dateText = pendingDate?.format(
                             DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
@@ -214,7 +197,17 @@ private fun AgendaItemRow(
         DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
     }
 
-    ElevatedCard {
+    val cardContainerColor = if (isSystemInDarkTheme()) {
+        Color(0xFFC2B872)
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerLow
+    }
+
+    ElevatedCard(
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = cardContainerColor
+        )
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
