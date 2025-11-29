@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,13 +28,13 @@ import coil.compose.AsyncImage // Se usa la oficial de Coil
 import com.example.petdateapp.viewmodel.GalleryViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(
     viewModel: GalleryViewModel = viewModel()
 ) {
-    // Obtener el contexto para inicialización de persistencia
     val context = LocalContext.current
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -58,6 +59,7 @@ fun GalleryScreen(
     val images = viewModel.images // List<Uri>
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             //Barra personalizada con borde y texto centrado
             Surface(
@@ -220,21 +222,21 @@ private fun PlaceholderCard(
 }
 @Composable
 fun FullScreenImagePopup(imageUri: Uri, onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                .background(Color.Black.copy(alpha = 0.8f))
                 .clickable(onClick = onDismiss),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
                 model = imageUri,
                 contentDescription = "Imagen en pantalla completa",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(16.dp)),
+                modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Fit
             )
             IconButton(
@@ -246,7 +248,7 @@ fun FullScreenImagePopup(imageUri: Uri, onDismiss: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Cerrar",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = Color.White
                 )
             }
         }
