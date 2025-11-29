@@ -128,6 +128,9 @@ fun AgendaScreen(
         }
 
         if (showDescDialog) {
+            val titleColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.onSurface
+            val textColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.onSurface
+
             AlertDialog(
                 onDismissRequest = {
                     pendingDate = null
@@ -155,7 +158,7 @@ fun AgendaScreen(
                         }
                     ) { Text("Cancelar") }
                 },
-                title = { Text("Nueva cita") },
+                title = { Text("Nueva cita", color = titleColor) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
@@ -164,7 +167,13 @@ fun AgendaScreen(
                             singleLine = true,
                             label = { Text("Descripción de la cita") },
                             placeholder = { Text("Ej: vacuna antirrábica") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedLabelColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.primary,
+                                unfocusedLabelColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedTextColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = if (isSystemInDarkTheme()) Color(0xFFC2B872) else MaterialTheme.colorScheme.onSurface
+                            )
                         )
 
                         val is24h = DateFormat.is24HourFormat(context)
@@ -176,8 +185,8 @@ fun AgendaScreen(
                             else it.format(DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()))
                         } ?: "--:--"
 
-                        Text("Fecha: $dateText")
-                        Text("Hora: $timeText")
+                        Text("Fecha: $dateText", color = textColor)
+                        Text("Hora: $timeText", color = textColor)
                     }
                 }
             )

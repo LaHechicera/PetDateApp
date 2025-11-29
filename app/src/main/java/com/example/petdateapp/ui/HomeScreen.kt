@@ -267,6 +267,11 @@ fun AddEditPetDialog(
         }
     }
     val dialogColor = if (isSystemInDarkTheme()) Color(0xFFCEB7AB) else MaterialTheme.colorScheme.surface
+    val textFieldColors = if (isSystemInDarkTheme()) {
+        OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF120B06), focusedLabelColor = Color(0xFF120B06), unfocusedLabelColor = Color(0xFF120B06))
+    } else {
+        OutlinedTextFieldDefaults.colors()
+    }
 
 
     Dialog(onDismissRequest = onDismiss) {
@@ -296,12 +301,12 @@ fun AddEditPetDialog(
                     AsyncImage(model = imageUrl, contentDescription = "Imagen seleccionada", modifier = Modifier.size(100.dp))
                 }
 
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nombre") })
-                OutlinedTextField(value = animalType, onValueChange = { animalType = it }, label = { Text("Tipo de Animal") })
-                OutlinedTextField(value = weight, onValueChange = { weight = it }, label = { Text("Peso (ej. 5.2)") })
-                OutlinedTextField(value = allergies, onValueChange = { allergies = it }, label = { Text("Alergias") })
-                OutlinedTextField(value = food, onValueChange = { food = it }, label = { Text("Alimento") })
-                OutlinedTextField(value = bio, onValueChange = { bio = it }, label = { Text("Biografía / Observaciones") }, maxLines = 4)
+                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nombre") }, colors = textFieldColors)
+                OutlinedTextField(value = animalType, onValueChange = { animalType = it }, label = { Text("Tipo de Animal") }, colors = textFieldColors)
+                OutlinedTextField(value = weight, onValueChange = { weight = it }, label = { Text("Peso (ej. 5.2)") }, colors = textFieldColors)
+                OutlinedTextField(value = allergies, onValueChange = { allergies = it }, label = { Text("Alergias") }, colors = textFieldColors)
+                OutlinedTextField(value = food, onValueChange = { food = it }, label = { Text("Alimento") }, colors = textFieldColors)
+                OutlinedTextField(value = bio, onValueChange = { bio = it }, label = { Text("Biografía / Observaciones") }, maxLines = 4, colors = textFieldColors)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
