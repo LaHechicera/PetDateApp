@@ -23,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -265,13 +266,16 @@ fun AddEditPetDialog(
             imageUrl = newImageUri?.toString()
         }
     }
+    val dialogColor = if (isSystemInDarkTheme()) Color(0xFFCEB7AB) else MaterialTheme.colorScheme.surface
+
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = dialogColor)
         ) {
             Column(
                 modifier = Modifier
@@ -304,7 +308,8 @@ fun AddEditPetDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancelar")
+                        val cancelColor = if (isSystemInDarkTheme()) Color(0xFF120B06) else MaterialTheme.colorScheme.primary
+                        Text("Cancelar", color = cancelColor)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {                        val petData = pet?.copy(
@@ -343,8 +348,12 @@ fun PetDetailsDialog(
     onEdit: (PetDto) -> Unit,
     onDelete: () -> Unit
 ) {
+    val dialogColor = if (isSystemInDarkTheme()) Color(0xFFCEB7AB) else MaterialTheme.colorScheme.surface
     Dialog(onDismissRequest = onDismiss) {
-        Card(shape = RoundedCornerShape(16.dp)) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = dialogColor)
+        ) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -366,11 +375,13 @@ fun PetDetailsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Detalles de la mascota
-                Text("Tipo: ${pet.animalType}")
-                Text("Peso: ${pet.weight} kg")
-                Text("Alergias: ${pet.allergies}")
-                Text("Alimento: ${pet.food}")
-                Text("Bio: ${pet.bio}")
+                Column(horizontalAlignment = Alignment.Start) {
+                    Text("Tipo: ${pet.animalType}")
+                    Text("Peso: ${pet.weight} kg")
+                    Text("Alergias: ${pet.allergies}")
+                    Text("Alimento: ${pet.food}")
+                    Text("Bio: ${pet.bio}")
+                }
                 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -393,6 +404,7 @@ fun ConfirmDeleteDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val dialogColor = if (isSystemInDarkTheme()) Color(0xFFCEB7AB) else MaterialTheme.colorScheme.surface
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("¿Estás seguro?") },
@@ -409,7 +421,8 @@ fun ConfirmDeleteDialog(
             TextButton(onClick = onDismiss) {
                 Text("No")
             }
-        }
+        },
+        containerColor = dialogColor
     )
 }
 

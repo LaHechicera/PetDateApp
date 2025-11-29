@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -67,6 +68,16 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
         genero = profileState.genero
     }
 
+    val customTextFieldColors = if (isSystemInDarkTheme()) {
+        TextFieldDefaults.colors(
+            focusedContainerColor = Color(0xFFC2B872),
+            unfocusedContainerColor = Color(0xFFC2B872),
+            disabledContainerColor = Color(0xFFC2B872)
+        )
+    } else {
+        TextFieldDefaults.colors()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,7 +114,8 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
                     imageVector = Icons.Outlined.Person,
                     contentDescription = "Nombre"
                 )
-            }
+            },
+            colors = customTextFieldColors
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -118,7 +130,8 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
                     imageVector = Icons.Outlined.Email,
                     contentDescription = "Correo Electrónico"
                 )
-            }
+            },
+            colors = customTextFieldColors
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -133,7 +146,8 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
                     imageVector = Icons.Outlined.Phone,
                     contentDescription = "Teléfono"
                 )
-            }
+            },
+            colors = customTextFieldColors
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -155,7 +169,8 @@ fun ProfileScreen(profileViewModel: ProfileViewModel) {
                         imageVector = Icons.Outlined.Wc,
                         contentDescription = "Género"
                     )
-                }
+                },
+                colors = customTextFieldColors
             )
             ExposedDropdownMenu(
                 expanded = genderMenuExpanded && isEditing,

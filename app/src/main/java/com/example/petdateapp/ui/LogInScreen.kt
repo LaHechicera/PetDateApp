@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,17 @@ fun LoginScreen(
         }
     }
 
+    val outlinedTextFieldColors = if (isSystemInDarkTheme()) {
+        OutlinedTextFieldDefaults.colors(
+            focusedLabelColor = Color(0xFFC2B872),
+            unfocusedLabelColor = Color(0xFFC2B872),
+            focusedTextColor = Color(0xFFC2B872),
+            unfocusedTextColor = Color(0xFFC2B872)
+        )
+    } else {
+        OutlinedTextFieldDefaults.colors()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,10 +92,7 @@ fun LoginScreen(
             onValueChange = { logInViewModel.correo.value = it },
             label = { Text("Correo") },
             singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline
-            )
+            colors = outlinedTextFieldColors
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -94,10 +103,7 @@ fun LoginScreen(
             label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline
-            )
+            colors = outlinedTextFieldColors
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -152,20 +158,22 @@ fun LoginScreen(
     }
 
     if (showWelcomeDialog) {
+        val titleColor = if (isSystemInDarkTheme()) Color(0xFF120B06) else MaterialTheme.colorScheme.primary
+        val textColor = if (isSystemInDarkTheme()) Color(0xFF120B06) else MaterialTheme.colorScheme.onSurface
         AlertDialog(
             onDismissRequest = {}, 
             confirmButton = {},
             title = {
                 Text(
                     "¡Bienvenido a PetDate!",
-                    color = MaterialTheme.colorScheme.primary,
+                    color = titleColor,
                     style = MaterialTheme.typography.headlineSmall
                 )
             },
             text = {
                 Text(
                     "Nos alegra verte nuevamente 🐾",
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = textColor,
                     style = MaterialTheme.typography.bodyMedium
                 )
             },

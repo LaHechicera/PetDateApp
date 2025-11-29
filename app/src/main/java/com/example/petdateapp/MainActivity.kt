@@ -126,7 +126,7 @@ class MainActivity : ComponentActivity() {
 
                                             Image(
                                                 painter = painterResource(
-                                                    id = if (isDarkThemeTop) R.drawable.logo_dark else R.drawable.logo_light
+                                                    id = if (isDarkThemeTop) R.drawable.logo_light else R.drawable.logo_light
                                                 ),
                                                 contentDescription = "Logo PetDate",
                                                 modifier = Modifier
@@ -165,6 +165,7 @@ class MainActivity : ComponentActivity() {
                                             containerColor = Color.Transparent,
                                             contentColor = MaterialTheme.colorScheme.onSurface
                                         ) {
+                                            val selectedColor = if (isSystemInDarkTheme()) Color(0xFF64504A) else MaterialTheme.colorScheme.primary
                                             NavigationBarItem(
                                                 selected = (currentRoute == "home" && selectedIndex == 0),
                                                 onClick = {
@@ -185,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                                     Text(
                                                         "Galeria",
                                                         color = if (currentRoute == "home" && selectedIndex == 0)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -195,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                                         imageVector = Icons.Filled.Photo,
                                                         contentDescription = "Galeria",
                                                         tint = if (currentRoute == "home" && selectedIndex == 0)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -222,7 +223,7 @@ class MainActivity : ComponentActivity() {
                                                     Text(
                                                         "Inicio",
                                                         color = if (currentRoute == "home" && selectedIndex == 1)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -232,7 +233,7 @@ class MainActivity : ComponentActivity() {
                                                         imageVector = Icons.Filled.Home,
                                                         contentDescription = "Inicio",
                                                         tint = if (currentRoute == "home" && selectedIndex == 1)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -259,7 +260,7 @@ class MainActivity : ComponentActivity() {
                                                     Text(
                                                         "Agenda",
                                                         color = if (currentRoute == "home" && selectedIndex == 2)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -269,7 +270,7 @@ class MainActivity : ComponentActivity() {
                                                         imageVector = Icons.Filled.CalendarToday,
                                                         contentDescription = "Agenda",
                                                         tint = if (currentRoute == "home" && selectedIndex == 2)
-                                                            MaterialTheme.colorScheme.primary
+                                                            selectedColor
                                                         else
                                                             MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -330,7 +331,7 @@ class MainActivity : ComponentActivity() {
                             ) {
 
                                 Surface(
-                                    color = if (isDarkTheme) Color(0xB7986416) else Color(0xFFDAD1C6),
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
                                     tonalElevation = 0.dp,
                                     shadowElevation = 0.dp,
                                     shape = RoundedCornerShape(0.dp),
@@ -360,13 +361,13 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Outlined.AccountCircle,
                                                 contentDescription = "Icono de perfil",
-                                                tint = MaterialTheme.colorScheme.onSurface
+                                                tint = Color(0xFF120B06)
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
                                                 text = "Mi Perfil",
                                                 style = MaterialTheme.typography.bodyLarge,
-                                                color = MaterialTheme.colorScheme.onSurface
+                                                color = Color(0xFF120B06)
                                             )
                                         }
 
@@ -393,13 +394,13 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Outlined.ExitToApp,
                                                 contentDescription = "Icono de cerrar sesión",
-                                                tint = MaterialTheme.colorScheme.onSurface
+                                                tint = Color(0xFF120B06)
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
                                                 text = "Cerrar sesión",
                                                 style = MaterialTheme.typography.bodyLarge,
-                                                color = MaterialTheme.colorScheme.onSurface
+                                                color = Color(0xFF120B06)
                                             )
                                         }
                                     }
