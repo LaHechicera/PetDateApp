@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity() {
                                             containerColor = Color.Transparent,
                                             contentColor = MaterialTheme.colorScheme.onSurface
                                         ) {
-                                            val selectedColor = if (isSystemInDarkTheme()) Color(0xFF64504A) else MaterialTheme.colorScheme.primary
+                                            val selectedColor = Color(0xFF64504A)
                                             NavigationBarItem(
                                                 selected = (currentRoute == "home" && selectedIndex == 0),
                                                 onClick = {
